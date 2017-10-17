@@ -6,6 +6,7 @@ const {
   ROOM_ID,
   SEASON,
   DISCOUNT,
+  STAY,
   createMoment,
   formatMoment
 } = require('..');
@@ -130,7 +131,7 @@ describe('base rates (1 adult)', function() {
           const calculator = new ReservationCalculator({
             adults: 1,
             stays: [{
-              type: 'RoomStay',
+              type: STAY.ROOM,
               roomId: roomId,
               checkInDate: formatMoment(dates[season].clone()),
               checkOutDate: formatMoment(dates[season].clone().add(nights, 'days'))
@@ -149,7 +150,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -165,7 +166,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(3, 'days'))
@@ -181,7 +182,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_SINGLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days'))
@@ -197,7 +198,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_SINGLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days'))
@@ -213,7 +214,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(8, 'days'))
@@ -229,7 +230,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(8, 'days'))
@@ -245,7 +246,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(12, 'days'))
@@ -261,7 +262,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(12, 'days'))
@@ -277,7 +278,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.DORMITORY,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -292,7 +293,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.NULL_ROOM,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -307,7 +308,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.NULL_ROOM,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(3, 'days'))
@@ -322,7 +323,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 2,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(5, 'days'))
@@ -338,7 +339,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 2,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(5, 'days'))
@@ -354,7 +355,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 2,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(15, 'days'))
@@ -370,7 +371,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 2,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(15, 'days'))
@@ -386,7 +387,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 2,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.TENT_HUT,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(5, 'days'))
@@ -402,7 +403,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 4,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.DORMITORY,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(5, 'days'))
@@ -419,7 +420,7 @@ describe('user stories', function() {
       adults: 1,
       children: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -436,7 +437,7 @@ describe('user stories', function() {
       adults: 2,
       children: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -452,7 +453,7 @@ describe('user stories', function() {
       adults: 2,
       children: 2,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -468,7 +469,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(10, 'days'))
@@ -490,7 +491,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(10, 'days'))
@@ -516,7 +517,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_BATH_SHARING,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(7, 'days'))
@@ -535,7 +536,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT_SHARING,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(12, 'days'))
@@ -550,7 +551,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT_SHARING,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(12, 'days'))
@@ -566,12 +567,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(2, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(2, 'days')),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(5, 'days'))
@@ -587,12 +588,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(2, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(2, 'days')),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(5, 'days'))
@@ -608,12 +609,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days')),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(9, 'days'))
@@ -629,12 +630,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days')),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(9, 'days'))
@@ -650,12 +651,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_SHARED_SHARING,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days')),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(9, 'days'))
@@ -671,12 +672,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_SHARED_SHARING,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days')),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(9, 'days'))
@@ -692,12 +693,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(2, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(5, 'days')),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(8, 'days'))
@@ -713,12 +714,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(2, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(5, 'days')),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(8, 'days'))
@@ -734,12 +735,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(15, 'days')),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(20, 'days'))
@@ -755,12 +756,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(15, 'days')),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(20, 'days'))
@@ -776,12 +777,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_SHARED_SHARING,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(20, 'days')),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(25, 'days'))
@@ -797,12 +798,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_SHARED_SHARING,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(4, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(20, 'days')),
         checkOutDate: formatMoment(dates[SEASON.SUMMER_2017].clone().add(25, 'days'))
@@ -818,12 +819,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.GARDEN_DOUBLE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(2, 'days'))
       }, {
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.OCEAN_VIEW,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(3, 'days'))
@@ -847,7 +848,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACH_HUT_SHARING,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(14, 'days')),
@@ -876,7 +877,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.BEACHFRONT,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(10, 'days'))
@@ -911,7 +912,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.TENT_SPACE,
         checkInDate: formatMoment(dates[SEASON.WINTER_2017].clone()),
         checkOutDate: formatMoment(dates[SEASON.WINTER_2017].clone().add(25, 'days'))
@@ -950,7 +951,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'TTCStay',
+        type: STAY.TTC,
         roomId: ROOM_ID.TENT_SPACE,
         checkInDate: '2017-04-03',
         checkOutDate: '2017-05-03',
@@ -964,7 +965,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'TTCStay',
+        type: STAY.TTC,
         roomId: ROOM_ID.DORMITORY,
         checkInDate: '2017-04-03',
         checkOutDate: '2017-05-03',
@@ -978,7 +979,7 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'TTCStay',
+        type: STAY.TTC,
         roomId: ROOM_ID.TENT_HUT,
         checkInDate: '2017-04-03',
         checkOutDate: '2017-05-03',
@@ -997,12 +998,12 @@ describe('user stories', function() {
     const calculator = new ReservationCalculator({
       adults: 1,
       stays: [{
-        type: 'RoomStay',
+        type: STAY.ROOM,
         roomId: ROOM_ID.TENT_HUT,
         checkInDate: '2017-03-26',
         checkOutDate: '2017-04-03'
       }, {
-        type: 'TTCStay',
+        type: STAY.TTC,
         roomId: ROOM_ID.TENT_HUT,
         checkInDate: '2017-04-03',
         checkOutDate: '2017-05-03'

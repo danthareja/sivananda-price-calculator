@@ -1,10 +1,10 @@
-import lodash_assign from 'lodash.assign';
-import _$1 from 'lodash.find';
-import lodash_flatmap from 'lodash.flatmap';
-import _$2 from 'lodash.round';
-import _$3 from 'lodash.sumby';
+import _$1 from 'lodash.assign';
+import _$2 from 'lodash.find';
+import _$3 from 'lodash.flatmap';
+import _$4 from 'lodash.round';
+import _$5 from 'lodash.sumby';
 import lodash_matchesproperty from 'lodash.matchesproperty';
-import _$4 from 'lodash.values';
+import _$6 from 'lodash.values';
 import Moment from 'moment';
 
 // Import only used functions from lodash to keep bundle size down
@@ -29,38 +29,43 @@ var formatMoment = function formatMoment(moment) {
 };
 
 var DISCOUNT = {
-  PERCENT: 'percent',
-  FIXED: 'fixed'
+  PERCENT: 'PERCENT',
+  FIXED: 'FIXED'
+};
+
+var STAY = {
+  ROOM: 'ROOM',
+  TTC: 'TTC'
 };
 
 var SEASON = {
-  SUMMER_2015: 'summer_2015',
-  WINTER_2016: 'winter_2016',
-  SUMMER_2016: 'summer_2016',
-  WINTER_2017: 'winter_2017',
-  SUMMER_2017: 'summer_2017',
-  WINTER_2018: 'winter_2018',
-  SUMMER_2018: 'summer_2018'
+  SUMMER_2015: 'SUMMER_2015',
+  WINTER_2016: 'WINTER_2016',
+  SUMMER_2016: 'SUMMER_2016',
+  WINTER_2017: 'WINTER_2017',
+  SUMMER_2017: 'SUMMER_2017',
+  WINTER_2018: 'WINTER_2018',
+  SUMMER_2018: 'SUMMER_2018'
 };
 
 var ROOM_ID = {
-  BEACHFRONT: 'beachfront',
-  BEACHFRONT_SHARING: 'beachfront_sharing',
-  OCEAN_VIEW: 'oceanview',
-  OCEAN_VIEW_SHARING: 'oceanview_sharing',
-  BEACH_HUT: 'beach_hut',
-  BEACH_HUT_SHARING: 'beach_hut_sharing',
-  GARDEN_BATH: 'garden_bath',
-  GARDEN_BATH_SHARING: 'garden_bath_sharing',
-  GARDEN_DOUBLE: 'garden_double',
-  GARDEN_DOUBLE_SHARING: 'garden_double_sharing',
-  GARDEN_SINGLE: 'garden_single',
-  GARDEN_SHARED: 'garden_shared',
-  GARDEN_SHARED_SHARING: 'garden_shared_sharing',
-  DORMITORY: 'dormitory',
-  TENT_HUT: 'tent_hut',
-  TENT_SPACE: 'tent_space',
-  NULL_ROOM: 'null_room'
+  BEACHFRONT: 'BEACHFRONT',
+  BEACHFRONT_SHARING: 'BEACHFRONT_SHARING',
+  OCEAN_VIEW: 'OCEANVIEW',
+  OCEAN_VIEW_SHARING: 'OCEANVIEW_SHARING',
+  BEACH_HUT: 'BEACH_HUT',
+  BEACH_HUT_SHARING: 'BEACH_HUT_SHARING',
+  GARDEN_BATH: 'GARDEN_BATH',
+  GARDEN_BATH_SHARING: 'GARDEN_BATH_SHARING',
+  GARDEN_DOUBLE: 'GARDEN_DOUBLE',
+  GARDEN_DOUBLE_SHARING: 'GARDEN_DOUBLE_SHARING',
+  GARDEN_SINGLE: 'GARDEN_SINGLE',
+  GARDEN_SHARED: 'GARDEN_SHARED',
+  GARDEN_SHARED_SHARING: 'GARDEN_SHARED_SHARING',
+  DORMITORY: 'DORMITORY',
+  TENT_HUT: 'TENT_HUT',
+  TENT_SPACE: 'TENT_SPACE',
+  NULL_ROOM: 'NULL_ROOM'
 };
 
 var asyncGenerator = function () {
@@ -333,75 +338,6 @@ var seasons = [{
 
 var yvpRates = (_yvpRates = {}, defineProperty(_yvpRates, SEASON.SUMMER_2015, 20), defineProperty(_yvpRates, SEASON.WINTER_2016, 32), defineProperty(_yvpRates, SEASON.WINTER_2017, 32), defineProperty(_yvpRates, SEASON.SUMMER_2017, 20), _yvpRates);
 
-// const roomRates = {
-//   [ROOM_ID.BEACHFRONT]: {
-//     [SEASON.SUMMER_2015]: [136, 128, 121, 116],
-//     [SEASON.WINTER_2016]: [147, 137, 131, 127],
-//     [SEASON.WINTER_2017]: [159, 148, 141, 136],
-//     [SEASON.SUMMER_2017]: [136, 128, 121, 116]
-//   },
-//   [ROOM_ID.OCEAN_VIEW]: {
-//     [SEASON.SUMMER_2015]: [129, 121, 114, 109],
-//     [SEASON.WINTER_2016]: [140, 130, 124, 119],
-//     [SEASON.WINTER_2017]: [147, 137, 130, 125],
-//     [SEASON.SUMMER_2017]: [129, 121, 114, 109]
-//   },
-//   [ROOM_ID.BEACH_HUT]: {
-//     [SEASON.SUMMER_2015]: [109, 102, 97, 93],
-//     [SEASON.WINTER_2016]: [120, 112, 106, 102],
-//     [SEASON.WINTER_2017]: [127, 119, 112, 108],
-//     [SEASON.SUMMER_2017]:  [109, 102, 97, 93]
-//   },
-//   [ROOM_ID.GARDEN_BATH]: {
-//     [SEASON.SUMMER_2015]: [121, 113, 107, 103],
-//     [SEASON.WINTER_2016]: [131, 123, 116, 111],
-//     [SEASON.WINTER_2017]: [138, 129, 122, 117],
-//     [SEASON.SUMMER_2017]: [121, 113, 107, 103]
-//   },
-//   [ROOM_ID.GARDEN_DOUBLE]: {
-//     [SEASON.SUMMER_2015]: [99, 93, 88, 84],
-//     [SEASON.WINTER_2016]: [109, 103, 98, 94],
-//     [SEASON.WINTER_2017]: [138, 130, 124, 118],
-//     [SEASON.SUMMER_2017]: [120, 112, 106, 102]
-//   },
-//   [ROOM_ID.GARDEN_SHARED]: {
-//     [SEASON.SUMMER_2015]: [99, 93, 88, 84],
-//     [SEASON.WINTER_2016]: [109, 103, 98, 94],
-//     [SEASON.WINTER_2017]: [112, 106, 101, 97],
-//     [SEASON.SUMMER_2017]: [99, 93, 88, 84]
-//   },
-//   [ROOM_ID.GARDEN_SINGLE]:  {
-//     [SEASON.SUMMER_2015]: [116, 108, 103, 99],
-//     [SEASON.WINTER_2016]: [127, 119, 113, 108],
-//     [SEASON.WINTER_2017]: [133, 125, 119, 113],
-//     [SEASON.SUMMER_2017]: [116, 108, 103, 99]
-//   },
-//   [ROOM_ID.DORMITORY]: {
-//     [SEASON.SUMMER_2015]: [83, 77, 73, 70],
-//     [SEASON.WINTER_2016]: [94, 88, 84, 81],
-//     [SEASON.WINTER_2017]: [80, 75, 71, 69],
-//     [SEASON.SUMMER_2017]: [80, 75, 71, 69]
-//   },
-//   [ROOM_ID.TENT_HUT]: {
-//     [SEASON.SUMMER_2015]: [79, 74, 70, 67],
-//     [SEASON.WINTER_2016]: [79, 74, 70, 67],
-//     [SEASON.WINTER_2017]: [82, 77, 73, 70],
-//     [SEASON.SUMMER_2017]: [82, 77, 73, 70]
-//   },
-//   [ROOM_ID.TENT_SPACE]: {
-//     [SEASON.SUMMER_2015]: [69, 64, 61, 58],
-//     [SEASON.WINTER_2016]: [69, 64, 61, 58],
-//     [SEASON.WINTER_2017]: [69, 64, 61, 58]
-//   },
-//   [ROOM_ID.NULL_ROOM]: {
-//     [SEASON.SUMMER_2015]: [0, 0, 0, 0],
-//     [SEASON.WINTER_2016]: [0, 0, 0, 0],
-//     [SEASON.WINTER_2017]: [0, 0, 0, 0],
-//     [SEASON.SUMMER_2017]: [0, 0, 0, 0]
-//   }
-// };
-
-
 var roomRates = (_roomRates = {}, defineProperty(_roomRates, SEASON.SUMMER_2015, (_SEASON$SUMMER_ = {}, defineProperty(_SEASON$SUMMER_, ROOM_ID.BEACHFRONT, [136, 128, 121, 116]), defineProperty(_SEASON$SUMMER_, ROOM_ID.OCEAN_VIEW, [129, 121, 114, 109]), defineProperty(_SEASON$SUMMER_, ROOM_ID.BEACH_HUT, [109, 102, 97, 93]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_BATH, [121, 113, 107, 103]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_DOUBLE, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_SHARED, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_SINGLE, [116, 108, 103, 99]), defineProperty(_SEASON$SUMMER_, ROOM_ID.DORMITORY, [83, 77, 73, 70]), defineProperty(_SEASON$SUMMER_, ROOM_ID.TENT_HUT, [79, 74, 70, 67]), defineProperty(_SEASON$SUMMER_, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$SUMMER_, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$SUMMER_)), defineProperty(_roomRates, SEASON.WINTER_2016, (_SEASON$WINTER_ = {}, defineProperty(_SEASON$WINTER_, ROOM_ID.BEACHFRONT, [147, 137, 131, 127]), defineProperty(_SEASON$WINTER_, ROOM_ID.OCEAN_VIEW, [140, 130, 124, 119]), defineProperty(_SEASON$WINTER_, ROOM_ID.BEACH_HUT, [120, 112, 106, 102]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_BATH, [131, 123, 116, 111]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_DOUBLE, [109, 103, 98, 94]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_SHARED, [109, 103, 98, 94]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_SINGLE, [127, 119, 113, 108]), defineProperty(_SEASON$WINTER_, ROOM_ID.DORMITORY, [94, 88, 84, 81]), defineProperty(_SEASON$WINTER_, ROOM_ID.TENT_HUT, [79, 74, 70, 67]), defineProperty(_SEASON$WINTER_, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$WINTER_, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$WINTER_)), defineProperty(_roomRates, SEASON.WINTER_2017, (_SEASON$WINTER_2 = {}, defineProperty(_SEASON$WINTER_2, ROOM_ID.BEACHFRONT, [159, 148, 141, 136]), defineProperty(_SEASON$WINTER_2, ROOM_ID.OCEAN_VIEW, [147, 137, 130, 125]), defineProperty(_SEASON$WINTER_2, ROOM_ID.BEACH_HUT, [127, 119, 112, 108]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_BATH, [138, 129, 122, 117]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_DOUBLE, [138, 130, 124, 118]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_SHARED, [112, 106, 101, 97]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_SINGLE, [133, 125, 119, 113]), defineProperty(_SEASON$WINTER_2, ROOM_ID.DORMITORY, [80, 75, 71, 69]), defineProperty(_SEASON$WINTER_2, ROOM_ID.TENT_HUT, [82, 77, 73, 70]), defineProperty(_SEASON$WINTER_2, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$WINTER_2, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$WINTER_2)), defineProperty(_roomRates, SEASON.SUMMER_2017, (_SEASON$SUMMER_2 = {}, defineProperty(_SEASON$SUMMER_2, ROOM_ID.BEACHFRONT, [136, 128, 121, 116]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.OCEAN_VIEW, [129, 121, 114, 109]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.BEACH_HUT, [109, 102, 97, 93]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_BATH, [121, 113, 107, 103]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_DOUBLE, [120, 112, 106, 102]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_SHARED, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_SINGLE, [116, 108, 103, 99]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.DORMITORY, [80, 75, 71, 69]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.TENT_HUT, [82, 77, 73, 70]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$SUMMER_2)), _roomRates);
 
 var SeasonPrice = function () {
@@ -477,7 +413,7 @@ var SeasonPriceFactory = function () {
   createClass(SeasonPriceFactory, null, [{
     key: 'getSeasonFromDate',
     value: function getSeasonFromDate(date) {
-      return _$1(seasons, function (_ref) {
+      return _$2(seasons, function (_ref) {
         var startDate = _ref.startDate,
             endDate = _ref.endDate;
         return date.within(moment.range(startDate, endDate));
@@ -904,8 +840,13 @@ var RoomStay = function () {
   return RoomStay;
 }();
 
+// Room ID's allowed for a TTC stay
+
+
+var TTC_ROOM_IDS = [ROOM_ID.TENT_SPACE, ROOM_ID.TENT_HUT, ROOM_ID.DORMITORY];
+
 // Dates of TTC, including the 1 free day
-var dates = [{
+var TTC_DATES = [{
   label: 'April 4 — May 1, 2017',
   checkInDate: createMoment('2017-04-03'),
   checkOutDate: createMoment('2017-05-03')
@@ -988,13 +929,30 @@ var TTCStay = function (_RoomStay) {
   return TTCStay;
 }(RoomStay);
 
-TTCStay.getDates = function () {
-  return _.flatMap(TTCStay._dates, function (date) {
-    return TTCStay._roomIds.map(function (roomId) {
-      return _.assign({ roomId: roomId }, date);
-    });
-  });
-};
+var StayFactory = function () {
+  function StayFactory() {
+    classCallCheck(this, StayFactory);
+  }
+
+  createClass(StayFactory, null, [{
+    key: 'createStay',
+    value: function createStay(stay, courses, reservation) {
+      if (stay.type === STAY.ROOM) return new RoomStay(stay, courses, reservation);
+      if (stay.type === STAY.TTC) return new TTCStay(stay, courses, reservation);
+      throw new Error('Invalid stay type: ' + stay.type);
+    }
+  }, {
+    key: 'getTTCDates',
+    value: function getTTCDates() {
+      return _$3(TTC_DATES, function (date) {
+        return TTC_ROOM_IDS.map(function (roomId) {
+          return _$1({ roomId: roomId }, date);
+        });
+      });
+    }
+  }]);
+  return StayFactory;
+}();
 
 var Course = function () {
   function Course(_ref) {
@@ -1054,7 +1012,7 @@ var ReservationCalculator = function () {
     this.reservation = {
       adults: adults,
       children: children,
-      nights: _$3(stays, function (stay) {
+      nights: _$5(stays, function (stay) {
         return createMoment(stay.checkOutDate).diff(createMoment(stay.checkInDate), 'days');
       })
     };
@@ -1062,9 +1020,7 @@ var ReservationCalculator = function () {
       return new Course(course);
     });
     this.stays = stays.map(function (stay) {
-      if (stay.type === 'RoomStay') return new RoomStay(stay, _this.courses, _this.reservation);
-      if (stay.type === 'TTCStay') return new TTCStay(stay, _this.courses, _this.reservation);
-      throw new Error('Invalid stay type: ' + stay.type);
+      return StayFactory.createStay(stay, _this.courses, _this.reservation);
     });
   }
 
@@ -1100,17 +1056,17 @@ var ReservationCalculator = function () {
   }, {
     key: 'getTotalRoom',
     value: function getTotalRoom() {
-      return _$2(_$3(_$4(this.getDailyRoomYVP()), 'room'), 2);
+      return _$4(_$5(_$6(this.getDailyRoomYVP()), 'room'), 2);
     }
   }, {
     key: 'getTotalYVP',
     value: function getTotalYVP() {
-      return _$2(_$3(_$4(this.getDailyRoomYVP()), 'yvp'), 2);
+      return _$4(_$5(_$6(this.getDailyRoomYVP()), 'yvp'), 2);
     }
   }, {
     key: 'getTotalCourse',
     value: function getTotalCourse() {
-      return _$2(_$3(this.courses, function (course) {
+      return _$4(_$5(this.courses, function (course) {
         return course.totalCost();
       }), 2);
     }
@@ -1128,4 +1084,4 @@ var ReservationCalculator = function () {
   return ReservationCalculator;
 }();
 
-export { ReservationCalculator, RoomCategoryFactory, SeasonPriceFactory, ROOM_ID, SEASON, DISCOUNT, moment, createMoment, formatMoment };
+export { ReservationCalculator, RoomCategoryFactory, SeasonPriceFactory, StayFactory as RoomStayFactory, ROOM_ID, SEASON, DISCOUNT, STAY, moment, createMoment, formatMoment };

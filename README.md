@@ -10,10 +10,10 @@ import { ReservationCalculator } from 'sivananda-price-calculator'
 const calculator = new ReservationCalculator({
   adults: 1,
   stays: [{
-    type: 'RoomStay',
-    roomId: 'oceanview',
+    type: 'ROOM',
+    roomId: 'OCEANVIEW',
     checkInDate: '2016-11-01',
-    checkOutDate: '2016-11-01'
+    checkOutDate: '2016-11-04'
   }]
 })
 

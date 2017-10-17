@@ -1,7 +1,6 @@
 import * as _ from './lodash'
 import { createMoment } from './moment'
-import RoomStay from './RoomStay'
-import TTCStay from './TTCStay'
+import RoomStayFactory from './RoomStayFactory'
 import Course from './Course'
 
 export default class ReservationCalculator {
@@ -14,11 +13,7 @@ export default class ReservationCalculator {
       })
     }
     this.courses = courses.map(course => new Course(course))
-    this.stays = stays.map(stay => {
-      if (stay.type === 'RoomStay') return new RoomStay(stay, this.courses, this.reservation)
-      if (stay.type === 'TTCStay') return new TTCStay(stay, this.courses, this.reservation)
-      throw new Error(`Invalid stay type: ${stay.type}`)
-    })
+    this.stays = stays.map(stay => RoomStayFactory.createStay(stay, this.courses, this.reservation))
   }
 
   getDailyRoomYVP() {

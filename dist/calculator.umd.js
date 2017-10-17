@@ -14,14 +14,633 @@
  */
 
 /** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]';
+var funcTag = '[object Function]';
+var genTag = '[object GeneratorFunction]';
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
+/**
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
+ *
+ * @private
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ */
+function baseTimes(n, iteratee) {
+  var index = -1,
+      result = Array(n);
+
+  while (++index < n) {
+    result[index] = iteratee(index);
+  }
+  return result;
+}
+
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
 
 /** Built-in value references. */
 var propertyIsEnumerable = objectProto.propertyIsEnumerable;
 
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeKeys = overArg(Object.keys, Object);
+var nativeMax = Math.max;
+
 /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
 var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
+
+/**
+ * Creates an array of the enumerable property names of the array-like `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @param {boolean} inherited Specify returning inherited property names.
+ * @returns {Array} Returns the array of property names.
+ */
+function arrayLikeKeys(value, inherited) {
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  // Safari 9 makes `arguments.length` enumerable in strict mode.
+  var result = (isArray(value) || isArguments(value))
+    ? baseTimes(value.length, String)
+    : [];
+
+  var length = result.length,
+      skipIndexes = !!length;
+
+  for (var key in value) {
+    if ((inherited || hasOwnProperty.call(value, key)) &&
+        !(skipIndexes && (key == 'length' || isIndex(key, length)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+/**
+ * Assigns `value` to `key` of `object` if the existing value is not equivalent
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function assignValue(object, key, value) {
+  var objValue = object[key];
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+      (value === undefined && !(key in object))) {
+    object[key] = value;
+  }
+}
+
+/**
+ * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeys(object) {
+  if (!isPrototype(object)) {
+    return nativeKeys(object);
+  }
+  var result = [];
+  for (var key in Object(object)) {
+    if (hasOwnProperty.call(object, key) && key != 'constructor') {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+/**
+ * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ */
+function baseRest(func, start) {
+  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = array;
+    return apply(func, this, otherArgs);
+  };
+}
+
+/**
+ * Copies properties of `source` to `object`.
+ *
+ * @private
+ * @param {Object} source The object to copy properties from.
+ * @param {Array} props The property identifiers to copy.
+ * @param {Object} [object={}] The object to copy properties to.
+ * @param {Function} [customizer] The function to customize copied values.
+ * @returns {Object} Returns `object`.
+ */
+function copyObject(source, props, object, customizer) {
+  object || (object = {});
+
+  var index = -1,
+      length = props.length;
+
+  while (++index < length) {
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : undefined;
+
+    assignValue(object, key, newValue === undefined ? source[key] : newValue);
+  }
+  return object;
+}
+
+/**
+ * Creates a function like `_.assign`.
+ *
+ * @private
+ * @param {Function} assigner The function to assign values.
+ * @returns {Function} Returns the new assigner function.
+ */
+function createAssigner(assigner) {
+  return baseRest(function(object, sources) {
+    var index = -1,
+        length = sources.length,
+        customizer = length > 1 ? sources[length - 1] : undefined,
+        guard = length > 2 ? sources[2] : undefined;
+
+    customizer = (assigner.length > 3 && typeof customizer == 'function')
+      ? (length--, customizer)
+      : undefined;
+
+    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+      customizer = length < 3 ? undefined : customizer;
+      length = 1;
+    }
+    object = Object(object);
+    while (++index < length) {
+      var source = sources[index];
+      if (source) {
+        assigner(object, source, index, customizer);
+      }
+    }
+    return object;
+  });
+}
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
+ * Checks if the given arguments are from an iteratee call.
+ *
+ * @private
+ * @param {*} value The potential iteratee value argument.
+ * @param {*} index The potential iteratee index or key argument.
+ * @param {*} object The potential iteratee object argument.
+ * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+ *  else `false`.
+ */
+function isIterateeCall(value, index, object) {
+  if (!isObject(object)) {
+    return false;
+  }
+  var type = typeof index;
+  if (type == 'number'
+        ? (isArrayLike(object) && isIndex(index, object.length))
+        : (type == 'string' && index in object)
+      ) {
+    return eq(object[index], value);
+  }
+  return false;
+}
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
+}
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+function isArguments(value) {
+  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
+  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(value.length) && !isFunction(value);
+}
+
+/**
+ * This method is like `_.isArrayLike` except that it also checks if `value`
+ * is an object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array-like object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArrayLikeObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLikeObject(document.body.children);
+ * // => true
+ *
+ * _.isArrayLikeObject('abc');
+ * // => false
+ *
+ * _.isArrayLikeObject(_.noop);
+ * // => false
+ */
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value);
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8-9 which returns 'object' for typed array and other constructors.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Assigns own enumerable string keyed properties of source objects to the
+ * destination object. Source objects are applied from left to right.
+ * Subsequent sources overwrite property assignments of previous sources.
+ *
+ * **Note:** This method mutates `object` and is loosely based on
+ * [`Object.assign`](https://mdn.io/Object/assign).
+ *
+ * @static
+ * @memberOf _
+ * @since 0.10.0
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} [sources] The source objects.
+ * @returns {Object} Returns `object`.
+ * @see _.assignIn
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * function Bar() {
+ *   this.c = 3;
+ * }
+ *
+ * Foo.prototype.b = 2;
+ * Bar.prototype.d = 4;
+ *
+ * _.assign({ 'a': 0 }, new Foo, new Bar);
+ * // => { 'a': 1, 'c': 3 }
+ */
+var assign = createAssigner(function(object, source) {
+  if (nonEnumShadows || isPrototype(source) || isArrayLike(source)) {
+    copyObject(source, keys(source), object);
+    return;
+  }
+  for (var key in source) {
+    if (hasOwnProperty.call(source, key)) {
+      assignValue(object, key, source[key]);
+    }
+  }
+});
+
+/**
+ * Creates an array of the own enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects. See the
+ * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+ * for more details.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keys(new Foo);
+ * // => ['a', 'b'] (iteration order is not guaranteed)
+ *
+ * _.keys('hi');
+ * // => ['0', '1']
+ */
+function keys(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+}
+
+var lodash_assign = assign;
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -15169,38 +15788,43 @@ var formatMoment = function formatMoment(moment) {
 };
 
 var DISCOUNT = {
-  PERCENT: 'percent',
-  FIXED: 'fixed'
+  PERCENT: 'PERCENT',
+  FIXED: 'FIXED'
+};
+
+var STAY = {
+  ROOM: 'ROOM',
+  TTC: 'TTC'
 };
 
 var SEASON = {
-  SUMMER_2015: 'summer_2015',
-  WINTER_2016: 'winter_2016',
-  SUMMER_2016: 'summer_2016',
-  WINTER_2017: 'winter_2017',
-  SUMMER_2017: 'summer_2017',
-  WINTER_2018: 'winter_2018',
-  SUMMER_2018: 'summer_2018'
+  SUMMER_2015: 'SUMMER_2015',
+  WINTER_2016: 'WINTER_2016',
+  SUMMER_2016: 'SUMMER_2016',
+  WINTER_2017: 'WINTER_2017',
+  SUMMER_2017: 'SUMMER_2017',
+  WINTER_2018: 'WINTER_2018',
+  SUMMER_2018: 'SUMMER_2018'
 };
 
 var ROOM_ID = {
-  BEACHFRONT: 'beachfront',
-  BEACHFRONT_SHARING: 'beachfront_sharing',
-  OCEAN_VIEW: 'oceanview',
-  OCEAN_VIEW_SHARING: 'oceanview_sharing',
-  BEACH_HUT: 'beach_hut',
-  BEACH_HUT_SHARING: 'beach_hut_sharing',
-  GARDEN_BATH: 'garden_bath',
-  GARDEN_BATH_SHARING: 'garden_bath_sharing',
-  GARDEN_DOUBLE: 'garden_double',
-  GARDEN_DOUBLE_SHARING: 'garden_double_sharing',
-  GARDEN_SINGLE: 'garden_single',
-  GARDEN_SHARED: 'garden_shared',
-  GARDEN_SHARED_SHARING: 'garden_shared_sharing',
-  DORMITORY: 'dormitory',
-  TENT_HUT: 'tent_hut',
-  TENT_SPACE: 'tent_space',
-  NULL_ROOM: 'null_room'
+  BEACHFRONT: 'BEACHFRONT',
+  BEACHFRONT_SHARING: 'BEACHFRONT_SHARING',
+  OCEAN_VIEW: 'OCEANVIEW',
+  OCEAN_VIEW_SHARING: 'OCEANVIEW_SHARING',
+  BEACH_HUT: 'BEACH_HUT',
+  BEACH_HUT_SHARING: 'BEACH_HUT_SHARING',
+  GARDEN_BATH: 'GARDEN_BATH',
+  GARDEN_BATH_SHARING: 'GARDEN_BATH_SHARING',
+  GARDEN_DOUBLE: 'GARDEN_DOUBLE',
+  GARDEN_DOUBLE_SHARING: 'GARDEN_DOUBLE_SHARING',
+  GARDEN_SINGLE: 'GARDEN_SINGLE',
+  GARDEN_SHARED: 'GARDEN_SHARED',
+  GARDEN_SHARED_SHARING: 'GARDEN_SHARED_SHARING',
+  DORMITORY: 'DORMITORY',
+  TENT_HUT: 'TENT_HUT',
+  TENT_SPACE: 'TENT_SPACE',
+  NULL_ROOM: 'NULL_ROOM'
 };
 
 var asyncGenerator = function () {
@@ -15472,75 +16096,6 @@ var seasons = [{
 }];
 
 var yvpRates = (_yvpRates = {}, defineProperty(_yvpRates, SEASON.SUMMER_2015, 20), defineProperty(_yvpRates, SEASON.WINTER_2016, 32), defineProperty(_yvpRates, SEASON.WINTER_2017, 32), defineProperty(_yvpRates, SEASON.SUMMER_2017, 20), _yvpRates);
-
-// const roomRates = {
-//   [ROOM_ID.BEACHFRONT]: {
-//     [SEASON.SUMMER_2015]: [136, 128, 121, 116],
-//     [SEASON.WINTER_2016]: [147, 137, 131, 127],
-//     [SEASON.WINTER_2017]: [159, 148, 141, 136],
-//     [SEASON.SUMMER_2017]: [136, 128, 121, 116]
-//   },
-//   [ROOM_ID.OCEAN_VIEW]: {
-//     [SEASON.SUMMER_2015]: [129, 121, 114, 109],
-//     [SEASON.WINTER_2016]: [140, 130, 124, 119],
-//     [SEASON.WINTER_2017]: [147, 137, 130, 125],
-//     [SEASON.SUMMER_2017]: [129, 121, 114, 109]
-//   },
-//   [ROOM_ID.BEACH_HUT]: {
-//     [SEASON.SUMMER_2015]: [109, 102, 97, 93],
-//     [SEASON.WINTER_2016]: [120, 112, 106, 102],
-//     [SEASON.WINTER_2017]: [127, 119, 112, 108],
-//     [SEASON.SUMMER_2017]:  [109, 102, 97, 93]
-//   },
-//   [ROOM_ID.GARDEN_BATH]: {
-//     [SEASON.SUMMER_2015]: [121, 113, 107, 103],
-//     [SEASON.WINTER_2016]: [131, 123, 116, 111],
-//     [SEASON.WINTER_2017]: [138, 129, 122, 117],
-//     [SEASON.SUMMER_2017]: [121, 113, 107, 103]
-//   },
-//   [ROOM_ID.GARDEN_DOUBLE]: {
-//     [SEASON.SUMMER_2015]: [99, 93, 88, 84],
-//     [SEASON.WINTER_2016]: [109, 103, 98, 94],
-//     [SEASON.WINTER_2017]: [138, 130, 124, 118],
-//     [SEASON.SUMMER_2017]: [120, 112, 106, 102]
-//   },
-//   [ROOM_ID.GARDEN_SHARED]: {
-//     [SEASON.SUMMER_2015]: [99, 93, 88, 84],
-//     [SEASON.WINTER_2016]: [109, 103, 98, 94],
-//     [SEASON.WINTER_2017]: [112, 106, 101, 97],
-//     [SEASON.SUMMER_2017]: [99, 93, 88, 84]
-//   },
-//   [ROOM_ID.GARDEN_SINGLE]:  {
-//     [SEASON.SUMMER_2015]: [116, 108, 103, 99],
-//     [SEASON.WINTER_2016]: [127, 119, 113, 108],
-//     [SEASON.WINTER_2017]: [133, 125, 119, 113],
-//     [SEASON.SUMMER_2017]: [116, 108, 103, 99]
-//   },
-//   [ROOM_ID.DORMITORY]: {
-//     [SEASON.SUMMER_2015]: [83, 77, 73, 70],
-//     [SEASON.WINTER_2016]: [94, 88, 84, 81],
-//     [SEASON.WINTER_2017]: [80, 75, 71, 69],
-//     [SEASON.SUMMER_2017]: [80, 75, 71, 69]
-//   },
-//   [ROOM_ID.TENT_HUT]: {
-//     [SEASON.SUMMER_2015]: [79, 74, 70, 67],
-//     [SEASON.WINTER_2016]: [79, 74, 70, 67],
-//     [SEASON.WINTER_2017]: [82, 77, 73, 70],
-//     [SEASON.SUMMER_2017]: [82, 77, 73, 70]
-//   },
-//   [ROOM_ID.TENT_SPACE]: {
-//     [SEASON.SUMMER_2015]: [69, 64, 61, 58],
-//     [SEASON.WINTER_2016]: [69, 64, 61, 58],
-//     [SEASON.WINTER_2017]: [69, 64, 61, 58]
-//   },
-//   [ROOM_ID.NULL_ROOM]: {
-//     [SEASON.SUMMER_2015]: [0, 0, 0, 0],
-//     [SEASON.WINTER_2016]: [0, 0, 0, 0],
-//     [SEASON.WINTER_2017]: [0, 0, 0, 0],
-//     [SEASON.SUMMER_2017]: [0, 0, 0, 0]
-//   }
-// };
-
 
 var roomRates = (_roomRates = {}, defineProperty(_roomRates, SEASON.SUMMER_2015, (_SEASON$SUMMER_ = {}, defineProperty(_SEASON$SUMMER_, ROOM_ID.BEACHFRONT, [136, 128, 121, 116]), defineProperty(_SEASON$SUMMER_, ROOM_ID.OCEAN_VIEW, [129, 121, 114, 109]), defineProperty(_SEASON$SUMMER_, ROOM_ID.BEACH_HUT, [109, 102, 97, 93]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_BATH, [121, 113, 107, 103]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_DOUBLE, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_SHARED, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_SINGLE, [116, 108, 103, 99]), defineProperty(_SEASON$SUMMER_, ROOM_ID.DORMITORY, [83, 77, 73, 70]), defineProperty(_SEASON$SUMMER_, ROOM_ID.TENT_HUT, [79, 74, 70, 67]), defineProperty(_SEASON$SUMMER_, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$SUMMER_, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$SUMMER_)), defineProperty(_roomRates, SEASON.WINTER_2016, (_SEASON$WINTER_ = {}, defineProperty(_SEASON$WINTER_, ROOM_ID.BEACHFRONT, [147, 137, 131, 127]), defineProperty(_SEASON$WINTER_, ROOM_ID.OCEAN_VIEW, [140, 130, 124, 119]), defineProperty(_SEASON$WINTER_, ROOM_ID.BEACH_HUT, [120, 112, 106, 102]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_BATH, [131, 123, 116, 111]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_DOUBLE, [109, 103, 98, 94]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_SHARED, [109, 103, 98, 94]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_SINGLE, [127, 119, 113, 108]), defineProperty(_SEASON$WINTER_, ROOM_ID.DORMITORY, [94, 88, 84, 81]), defineProperty(_SEASON$WINTER_, ROOM_ID.TENT_HUT, [79, 74, 70, 67]), defineProperty(_SEASON$WINTER_, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$WINTER_, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$WINTER_)), defineProperty(_roomRates, SEASON.WINTER_2017, (_SEASON$WINTER_2 = {}, defineProperty(_SEASON$WINTER_2, ROOM_ID.BEACHFRONT, [159, 148, 141, 136]), defineProperty(_SEASON$WINTER_2, ROOM_ID.OCEAN_VIEW, [147, 137, 130, 125]), defineProperty(_SEASON$WINTER_2, ROOM_ID.BEACH_HUT, [127, 119, 112, 108]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_BATH, [138, 129, 122, 117]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_DOUBLE, [138, 130, 124, 118]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_SHARED, [112, 106, 101, 97]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_SINGLE, [133, 125, 119, 113]), defineProperty(_SEASON$WINTER_2, ROOM_ID.DORMITORY, [80, 75, 71, 69]), defineProperty(_SEASON$WINTER_2, ROOM_ID.TENT_HUT, [82, 77, 73, 70]), defineProperty(_SEASON$WINTER_2, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$WINTER_2, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$WINTER_2)), defineProperty(_roomRates, SEASON.SUMMER_2017, (_SEASON$SUMMER_2 = {}, defineProperty(_SEASON$SUMMER_2, ROOM_ID.BEACHFRONT, [136, 128, 121, 116]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.OCEAN_VIEW, [129, 121, 114, 109]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.BEACH_HUT, [109, 102, 97, 93]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_BATH, [121, 113, 107, 103]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_DOUBLE, [120, 112, 106, 102]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_SHARED, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_SINGLE, [116, 108, 103, 99]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.DORMITORY, [80, 75, 71, 69]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.TENT_HUT, [82, 77, 73, 70]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$SUMMER_2)), _roomRates);
 
@@ -16044,8 +16599,13 @@ var RoomStay = function () {
   return RoomStay;
 }();
 
+// Room ID's allowed for a TTC stay
+
+
+var TTC_ROOM_IDS = [ROOM_ID.TENT_SPACE, ROOM_ID.TENT_HUT, ROOM_ID.DORMITORY];
+
 // Dates of TTC, including the 1 free day
-var dates = [{
+var TTC_DATES = [{
   label: 'April 4 — May 1, 2017',
   checkInDate: createMoment('2017-04-03'),
   checkOutDate: createMoment('2017-05-03')
@@ -16128,13 +16688,30 @@ var TTCStay = function (_RoomStay) {
   return TTCStay;
 }(RoomStay);
 
-TTCStay.getDates = function () {
-  return _.flatMap(TTCStay._dates, function (date) {
-    return TTCStay._roomIds.map(function (roomId) {
-      return _.assign({ roomId: roomId }, date);
-    });
-  });
-};
+var StayFactory = function () {
+  function StayFactory() {
+    classCallCheck(this, StayFactory);
+  }
+
+  createClass(StayFactory, null, [{
+    key: 'createStay',
+    value: function createStay(stay, courses, reservation) {
+      if (stay.type === STAY.ROOM) return new RoomStay(stay, courses, reservation);
+      if (stay.type === STAY.TTC) return new TTCStay(stay, courses, reservation);
+      throw new Error('Invalid stay type: ' + stay.type);
+    }
+  }, {
+    key: 'getTTCDates',
+    value: function getTTCDates() {
+      return lodash_flatmap(TTC_DATES, function (date) {
+        return TTC_ROOM_IDS.map(function (roomId) {
+          return lodash_assign({ roomId: roomId }, date);
+        });
+      });
+    }
+  }]);
+  return StayFactory;
+}();
 
 var Course = function () {
   function Course(_ref) {
@@ -16202,9 +16779,7 @@ var ReservationCalculator = function () {
       return new Course(course);
     });
     this.stays = stays.map(function (stay) {
-      if (stay.type === 'RoomStay') return new RoomStay(stay, _this.courses, _this.reservation);
-      if (stay.type === 'TTCStay') return new TTCStay(stay, _this.courses, _this.reservation);
-      throw new Error('Invalid stay type: ' + stay.type);
+      return StayFactory.createStay(stay, _this.courses, _this.reservation);
     });
   }
 
@@ -16271,9 +16846,11 @@ var ReservationCalculator = function () {
 exports.ReservationCalculator = ReservationCalculator;
 exports.RoomCategoryFactory = RoomCategoryFactory;
 exports.SeasonPriceFactory = SeasonPriceFactory;
+exports.RoomStayFactory = StayFactory;
 exports.ROOM_ID = ROOM_ID;
 exports.SEASON = SEASON;
 exports.DISCOUNT = DISCOUNT;
+exports.STAY = STAY;
 exports.moment = moment;
 exports.createMoment = createMoment;
 exports.formatMoment = formatMoment;
