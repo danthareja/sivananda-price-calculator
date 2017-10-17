@@ -48,70 +48,56 @@ const yvpRates = {
 };
 
 const roomRates = {
-  [ROOM_ID.BEACHFRONT]: {
-    [SEASON.SUMMER_2015]: [136, 128, 121, 116],
-    [SEASON.WINTER_2016]: [147, 137, 131, 127],
-    [SEASON.WINTER_2017]: [159, 148, 141, 136],
-    [SEASON.SUMMER_2017]: [136, 128, 121, 116]
+  [SEASON.SUMMER_2015]: {
+    [ROOM_ID.BEACHFRONT]: [136, 128, 121, 116],
+    [ROOM_ID.OCEAN_VIEW]: [129, 121, 114, 109],
+    [ROOM_ID.BEACH_HUT]: [109, 102, 97, 93],
+    [ROOM_ID.GARDEN_BATH]: [121, 113, 107, 103],
+    [ROOM_ID.GARDEN_DOUBLE]: [99, 93, 88, 84],
+    [ROOM_ID.GARDEN_SHARED]: [99, 93, 88, 84],
+    [ROOM_ID.GARDEN_SINGLE]: [116, 108, 103, 99],
+    [ROOM_ID.DORMITORY]: [83, 77, 73, 70],
+    [ROOM_ID.TENT_HUT]: [79, 74, 70, 67],
+    [ROOM_ID.TENT_SPACE]: [69, 64, 61, 58],
+    [ROOM_ID.NULL_ROOM]: [0, 0, 0, 0],
   },
-  [ROOM_ID.OCEAN_VIEW]: {
-    [SEASON.SUMMER_2015]: [129, 121, 114, 109],
-    [SEASON.WINTER_2016]: [140, 130, 124, 119],
-    [SEASON.WINTER_2017]: [147, 137, 130, 125],
-    [SEASON.SUMMER_2017]: [129, 121, 114, 109]
+  [SEASON.WINTER_2016]: {
+    [ROOM_ID.BEACHFRONT]: [147, 137, 131, 127],
+    [ROOM_ID.OCEAN_VIEW]: [140, 130, 124, 119],
+    [ROOM_ID.BEACH_HUT]: [120, 112, 106, 102],
+    [ROOM_ID.GARDEN_BATH]: [131, 123, 116, 111],
+    [ROOM_ID.GARDEN_DOUBLE]: [109, 103, 98, 94],
+    [ROOM_ID.GARDEN_SHARED]: [109, 103, 98, 94],
+    [ROOM_ID.GARDEN_SINGLE]: [127, 119, 113, 108],
+    [ROOM_ID.DORMITORY]: [94, 88, 84, 81],
+    [ROOM_ID.TENT_HUT]: [79, 74, 70, 67],
+    [ROOM_ID.TENT_SPACE]: [69, 64, 61, 58],
+    [ROOM_ID.NULL_ROOM]: [0, 0, 0, 0],
   },
-  [ROOM_ID.BEACH_HUT]: {
-    [SEASON.SUMMER_2015]: [109, 102, 97, 93],
-    [SEASON.WINTER_2016]: [120, 112, 106, 102],
-    [SEASON.WINTER_2017]: [127, 119, 112, 108],
-    [SEASON.SUMMER_2017]:  [109, 102, 97, 93]
+  [SEASON.WINTER_2017]: {
+    [ROOM_ID.BEACHFRONT]: [159, 148, 141, 136],
+    [ROOM_ID.OCEAN_VIEW]: [147, 137, 130, 125],
+    [ROOM_ID.BEACH_HUT]: [127, 119, 112, 108],
+    [ROOM_ID.GARDEN_BATH]: [138, 129, 122, 117],
+    [ROOM_ID.GARDEN_DOUBLE]: [138, 130, 124, 118],
+    [ROOM_ID.GARDEN_SHARED]: [112, 106, 101, 97],
+    [ROOM_ID.GARDEN_SINGLE]: [133, 125, 119, 113],
+    [ROOM_ID.DORMITORY]: [80, 75, 71, 69],
+    [ROOM_ID.TENT_HUT]: [82, 77, 73, 70],
+    [ROOM_ID.TENT_SPACE]: [69, 64, 61, 58],
+    [ROOM_ID.NULL_ROOM]: [0, 0, 0, 0],
   },
-  [ROOM_ID.GARDEN_BATH]: {
-    [SEASON.SUMMER_2015]: [121, 113, 107, 103],
-    [SEASON.WINTER_2016]: [131, 123, 116, 111],
-    [SEASON.WINTER_2017]: [138, 129, 122, 117],
-    [SEASON.SUMMER_2017]: [121, 113, 107, 103]
-  },
-  [ROOM_ID.GARDEN_DOUBLE]: {
-    [SEASON.SUMMER_2015]: [99, 93, 88, 84],
-    [SEASON.WINTER_2016]: [109, 103, 98, 94],
-    [SEASON.WINTER_2017]: [138, 130, 124, 118],
-    [SEASON.SUMMER_2017]: [120, 112, 106, 102]
-  },
-  [ROOM_ID.GARDEN_SHARED]: {
-    [SEASON.SUMMER_2015]: [99, 93, 88, 84],
-    [SEASON.WINTER_2016]: [109, 103, 98, 94],
-    [SEASON.WINTER_2017]: [112, 106, 101, 97],
-    [SEASON.SUMMER_2017]: [99, 93, 88, 84]
-  },
-  [ROOM_ID.GARDEN_SINGLE]:  {
-    [SEASON.SUMMER_2015]: [116, 108, 103, 99],
-    [SEASON.WINTER_2016]: [127, 119, 113, 108],
-    [SEASON.WINTER_2017]: [133, 125, 119, 113],
-    [SEASON.SUMMER_2017]: [116, 108, 103, 99]
-  },
-  [ROOM_ID.DORMITORY]: {
-    [SEASON.SUMMER_2015]: [83, 77, 73, 70],
-    [SEASON.WINTER_2016]: [94, 88, 84, 81],
-    [SEASON.WINTER_2017]: [80, 75, 71, 69],
-    [SEASON.SUMMER_2017]: [80, 75, 71, 69]
-  },
-  [ROOM_ID.TENT_HUT]: {
-    [SEASON.SUMMER_2015]: [79, 74, 70, 67],
-    [SEASON.WINTER_2016]: [79, 74, 70, 67],
-    [SEASON.WINTER_2017]: [82, 77, 73, 70],
-    [SEASON.SUMMER_2017]: [82, 77, 73, 70]
-  },
-  [ROOM_ID.TENT_SPACE]: {
-    [SEASON.SUMMER_2015]: [69, 64, 61, 58],
-    [SEASON.WINTER_2016]: [69, 64, 61, 58],
-    [SEASON.WINTER_2017]: [69, 64, 61, 58]
-  },
-  [ROOM_ID.NULL_ROOM]: {
-    [SEASON.SUMMER_2015]: [0, 0, 0, 0],
-    [SEASON.WINTER_2016]: [0, 0, 0, 0],
-    [SEASON.WINTER_2017]: [0, 0, 0, 0],
-    [SEASON.SUMMER_2017]: [0, 0, 0, 0]
+  [SEASON.SUMMER_2017]: {
+    [ROOM_ID.BEACHFRONT]: [136, 128, 121, 116],
+    [ROOM_ID.OCEAN_VIEW]: [129, 121, 114, 109],
+    [ROOM_ID.BEACH_HUT]:  [109, 102, 97, 93],
+    [ROOM_ID.GARDEN_BATH]: [121, 113, 107, 103],
+    [ROOM_ID.GARDEN_DOUBLE]: [120, 112, 106, 102],
+    [ROOM_ID.GARDEN_SHARED]: [99, 93, 88, 84],
+    [ROOM_ID.GARDEN_SINGLE]: [116, 108, 103, 99],
+    [ROOM_ID.DORMITORY]: [80, 75, 71, 69],
+    [ROOM_ID.TENT_HUT]: [82, 77, 73, 70],
+    [ROOM_ID.NULL_ROOM]: [0, 0, 0, 0],
   }
 };
 
@@ -121,10 +107,10 @@ class SeasonPrice {
   }
 
   getRoomBaseRate(roomId, nights){
-    if (nights <= 6) { return roomRates[roomId][this.type][0] }
-    if (nights <= 13) { return roomRates[roomId][this.type][1] }
-    if (nights <= 20) { return roomRates[roomId][this.type][2] }
-    if (nights >= 21) { return roomRates[roomId][this.type][3] }
+    if (nights <= 6) { return roomRates[this.type][roomId][0] }
+    if (nights <= 13) { return roomRates[this.type][roomId][1] }
+    if (nights <= 20) { return roomRates[this.type][roomId][2] }
+    if (nights >= 21) { return roomRates[this.type][roomId][3] }
   }
 
   getYVPRate(){
