@@ -4,9 +4,11 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var _ = _interopDefault(require('lodash.round'));
-var _$1 = _interopDefault(require('lodash.sumby'));
-var _$2 = _interopDefault(require('lodash.values'));
+var _$1 = _interopDefault(require('lodash.assign'));
+var _$2 = _interopDefault(require('lodash.flatmap'));
+var _$3 = _interopDefault(require('lodash.round'));
+var _$4 = _interopDefault(require('lodash.sumby'));
+var _$5 = _interopDefault(require('lodash.values'));
 var Moment = _interopDefault(require('moment'));
 
 // Import only used functions from lodash to keep bundle size down
@@ -506,6 +508,76 @@ var SeasonPriceFactory = function () {
   return SeasonPriceFactory;
 }();
 
+var rooms = [{
+  id: 'BEACHFRONT',
+  label: 'Beachfront Deluxe Suite (whole)',
+  maxOccupancy: 6
+}, {
+  id: 'BEACHFRONT_SHARING',
+  label: 'Beachfront Deluxe Suite (sharing)',
+  maxOccupancy: 1
+}, {
+  id: 'OCEAN_VIEW',
+  label: 'Ocean View Deluxe (whole)',
+  maxOccupancy: 4
+}, {
+  id: 'OCEAN_VIEW_SHARING',
+  label: 'Ocean View Deluxe (sharing)',
+  maxOccupancy: 1
+}, {
+  id: 'BEACH_HUT',
+  label: 'Beach Hut (whole)',
+  maxOccupancy: 4
+}, {
+  id: 'BEACH_HUT_SHARING',
+  label: 'Beach Hut (sharing)',
+  maxOccupancy: 1
+}, {
+  id: 'GARDEN_BATH',
+  label: 'Garden Room with Bath (whole)',
+  maxOccupancy: 4
+}, {
+  id: 'GARDEN_BATH_SHARING',
+  label: 'Garden Room with Bath (sharing)',
+  maxOccupancy: 1
+}, {
+  id: 'GARDEN_DOUBLE',
+  label: 'Garden Room Double Bed (whole)',
+  maxOccupancy: 4
+}, {
+  id: 'GARDEN_DOUBLE_SHARING',
+  label: 'Garden Room Double Bed (sharing)',
+  maxOccupancy: 1
+}, {
+  id: 'GARDEN_SINGLE',
+  label: 'Garden Room Single',
+  maxOccupancy: 1
+}, {
+  id: 'GARDEN_SHARED',
+  label: 'Garden Room Shared (whole)',
+  maxOccupancy: 3
+}, {
+  id: 'GARDEN_SHARED_SHARING',
+  label: 'Garden Room Shared (sharing)',
+  maxOccupancy: 1
+}, {
+  id: 'DORMITORY',
+  label: 'Dormitory',
+  maxOccupancy: 4
+}, {
+  id: 'TENT_HUT',
+  label: 'Tent Hut',
+  maxOccupancy: 2
+}, {
+  id: 'TENT_SPACE',
+  label: 'Tent Space',
+  maxOccupancy: 1
+}, {
+  id: 'NULL_ROOM',
+  label: 'No Room (only course)',
+  maxOccupancy: 1
+}];
+
 var AbstractRoomCategory = function () {
   function AbstractRoomCategory(id, isSharing) {
     classCallCheck(this, AbstractRoomCategory);
@@ -693,6 +765,22 @@ var RoomCategoryFactory = function () {
   }
 
   createClass(RoomCategoryFactory, null, [{
+    key: 'getRoomById',
+    value: function getRoomById(id) {
+      var room = _.find(rooms, _.matchesProperty('id', id));
+      if (!room) {
+        throw new Error('Could not find a room with id: ' + id);
+      }
+      return room;
+    }
+  }, {
+    key: 'filterRoomsByOccupancy',
+    value: function filterRoomsByOccupancy(occupancy) {
+      return rooms.filter(function (room) {
+        return occupancy <= room.maxOccupancy;
+      });
+    }
+  }, {
     key: 'createRoomCategory',
     value: function createRoomCategory(roomId, isSharing) {
       switch (roomId) {
@@ -894,6 +982,15 @@ var StayFactory = function () {
   }
 
   createClass(StayFactory, null, [{
+    key: 'getTTCDates',
+    value: function getTTCDates() {
+      return _$2(ttc.sessions, function (date) {
+        return ttc.rooms.map(function (roomId) {
+          return _$1({ roomId: roomId }, date);
+        });
+      });
+    }
+  }, {
     key: 'createStay',
     value: function createStay(stay, courses, reservation) {
       if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation);
@@ -962,7 +1059,7 @@ var ReservationCalculator = function () {
     this.reservation = {
       adults: adults,
       children: children,
-      nights: _$1(stays, function (stay) {
+      nights: _$4(stays, function (stay) {
         return createMoment(stay.checkOutDate).diff(createMoment(stay.checkInDate), 'days');
       })
     };
@@ -1006,17 +1103,17 @@ var ReservationCalculator = function () {
   }, {
     key: 'getTotalRoom',
     value: function getTotalRoom() {
-      return _(_$1(_$2(this.getDailyRoomYVP()), 'room'), 2);
+      return _$3(_$4(_$5(this.getDailyRoomYVP()), 'room'), 2);
     }
   }, {
     key: 'getTotalYVP',
     value: function getTotalYVP() {
-      return _(_$1(_$2(this.getDailyRoomYVP()), 'yvp'), 2);
+      return _$3(_$4(_$5(this.getDailyRoomYVP()), 'yvp'), 2);
     }
   }, {
     key: 'getTotalCourse',
     value: function getTotalCourse() {
-      return _(_$1(this.courses, function (course) {
+      return _$3(_$4(this.courses, function (course) {
         return course.totalCost();
       }), 2);
     }

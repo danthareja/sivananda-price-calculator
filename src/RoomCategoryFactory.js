@@ -59,6 +59,18 @@ class TentHutRoomCategory extends AbstractSingleBedRoomCategory {}
 class TentSpaceRoomCategory extends AbstractSingleBedRoomCategory {}
 
 export default class RoomCategoryFactory {
+  static getRoomById(id) {
+    const room =  _.find(rooms, _.matchesProperty('id', id))
+    if (!room) {
+      throw new Error(`Could not find a room with id: ${id}`)
+    }
+    return room
+  };
+
+  static filterRoomsByOccupancy(occupancy) {
+    return rooms.filter(room => occupancy <= room.maxOccupancy)
+  };
+
   static createRoomCategory(roomId, isSharing) {
     switch (roomId) {
       case 'BEACHFRONT': return new BeachFrontRoomCategory('BEACHFRONT', false || isSharing)
