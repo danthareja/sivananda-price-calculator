@@ -1,10 +1,6 @@
-import _$1 from 'lodash.assign';
-import _$2 from 'lodash.find';
-import _$3 from 'lodash.flatmap';
-import _$4 from 'lodash.round';
-import _$5 from 'lodash.sumby';
-import lodash_matchesproperty from 'lodash.matchesproperty';
-import _$6 from 'lodash.values';
+import _ from 'lodash.round';
+import _$1 from 'lodash.sumby';
+import _$2 from 'lodash.values';
 import Moment from 'moment';
 
 // Import only used functions from lodash to keep bundle size down
@@ -476,7 +472,7 @@ var SeasonPriceFactory = function () {
   createClass(SeasonPriceFactory, null, [{
     key: 'getSeasonFromDate',
     value: function getSeasonFromDate(date) {
-      return _$2(seasons, function (_ref) {
+      return seasons.find(function (_ref) {
         var startDate = _ref.startDate,
             endDate = _ref.endDate;
         return date.within(moment.range(createMoment(startDate), createMoment(endDate)));
@@ -503,76 +499,6 @@ var SeasonPriceFactory = function () {
   }]);
   return SeasonPriceFactory;
 }();
-
-var rooms = [{
-  id: 'BEACHFRONT',
-  label: 'Beachfront Deluxe Suite (whole)',
-  maxOccupancy: 6
-}, {
-  id: 'BEACHFRONT_SHARING',
-  label: 'Beachfront Deluxe Suite (sharing)',
-  maxOccupancy: 1
-}, {
-  id: 'OCEAN_VIEW',
-  label: 'Ocean View Deluxe (whole)',
-  maxOccupancy: 4
-}, {
-  id: 'OCEAN_VIEW_SHARING',
-  label: 'Ocean View Deluxe (sharing)',
-  maxOccupancy: 1
-}, {
-  id: 'BEACH_HUT',
-  label: 'Beach Hut (whole)',
-  maxOccupancy: 4
-}, {
-  id: 'BEACH_HUT_SHARING',
-  label: 'Beach Hut (sharing)',
-  maxOccupancy: 1
-}, {
-  id: 'GARDEN_BATH',
-  label: 'Garden Room with Bath (whole)',
-  maxOccupancy: 4
-}, {
-  id: 'GARDEN_BATH_SHARING',
-  label: 'Garden Room with Bath (sharing)',
-  maxOccupancy: 1
-}, {
-  id: 'GARDEN_DOUBLE',
-  label: 'Garden Room Double Bed (whole)',
-  maxOccupancy: 4
-}, {
-  id: 'GARDEN_DOUBLE_SHARING',
-  label: 'Garden Room Double Bed (sharing)',
-  maxOccupancy: 1
-}, {
-  id: 'GARDEN_SINGLE',
-  label: 'Garden Room Single',
-  maxOccupancy: 1
-}, {
-  id: 'GARDEN_SHARED',
-  label: 'Garden Room Shared (whole)',
-  maxOccupancy: 3
-}, {
-  id: 'GARDEN_SHARED_SHARING',
-  label: 'Garden Room Shared (sharing)',
-  maxOccupancy: 1
-}, {
-  id: 'DORMITORY',
-  label: 'Dormitory',
-  maxOccupancy: 4
-}, {
-  id: 'TENT_HUT',
-  label: 'Tent Hut',
-  maxOccupancy: 2
-}, {
-  id: 'TENT_SPACE',
-  label: 'Tent Space',
-  maxOccupancy: 1
-}, {
-  id: 'NULL_ROOM',
-  label: 'No Room (only course)',
-  maxOccupancy: 1
-}];
 
 var AbstractRoomCategory = function () {
   function AbstractRoomCategory(id, isSharing) {
@@ -761,22 +687,6 @@ var RoomCategoryFactory = function () {
   }
 
   createClass(RoomCategoryFactory, null, [{
-    key: 'getRoomById',
-    value: function getRoomById(id) {
-      var room = _.find(rooms, _.matchesProperty('id', id));
-      if (!room) {
-        throw new Error('Could not find a room with id: ' + id);
-      }
-      return room;
-    }
-  }, {
-    key: 'filterRoomsByOccupancy',
-    value: function filterRoomsByOccupancy(occupancy) {
-      return rooms.filter(function (room) {
-        return occupancy <= room.maxOccupancy;
-      });
-    }
-  }, {
     key: 'createRoomCategory',
     value: function createRoomCategory(roomId, isSharing) {
       switch (roomId) {
@@ -821,6 +731,64 @@ var RoomCategoryFactory = function () {
   }]);
   return RoomCategoryFactory;
 }();
+
+var ttc = {
+  rooms: ['TENT_SPACE', 'TENT_HUT', 'DORMITORY'],
+  prices: {
+    'TENT_SPACE': 2400,
+    'DORMITORY': 3255,
+    'TENT_HUT': 3490
+  },
+  sessions: [{
+    label: 'April 4 — May 1, 2017',
+    checkInDate: '2017-04-03',
+    checkOutDate: '2017-05-03'
+  }, {
+    label: 'May 4 — 31, 2017',
+    checkInDate: '2017-05-03',
+    checkOutDate: '2017-06-02'
+  }, {
+    label: 'June 3 — 30, 2017',
+    checkInDate: '2017-06-02',
+    checkOutDate: '2017-07-02'
+  }, {
+    label: 'July 3 — 30, 2017',
+    checkInDate: '2017-07-02',
+    checkOutDate: '2017-08-01'
+  }, {
+    label: 'November 4 — December 1, 2017',
+    checkInDate: '2017-11-03',
+    checkOutDate: '2017-12-03'
+  }, {
+    label: 'December 4 — 31, 2017',
+    checkInDate: '2017-12-03',
+    checkOutDate: '2018-01-03'
+  }, {
+    label: 'January 4 — 31, 2018',
+    checkInDate: '2018-01-03',
+    checkOutDate: '2018-02-02'
+  }, {
+    label: 'February 3 — March 2, 2018',
+    checkInDate: '2018-02-02',
+    checkOutDate: '2018-03-04'
+  }, {
+    label: 'March 7 — April 3, 2018',
+    checkInDate: '2018-03-06',
+    checkOutDate: '2018-04-05'
+  }, {
+    label: 'May 6 — June 2, 2018',
+    checkInDate: '2018-05-05',
+    checkOutDate: '2018-06-04'
+  }, {
+    label: 'June 5 — July 2, 2018',
+    checkInDate: '2018-06-04',
+    checkOutDate: '2018-07-04'
+  }, {
+    label: 'July 5 — August 1, 2018',
+    checkInDate: '2018-07-04',
+    checkOutDate: '2018-08-03'
+  }]
+};
 
 var RoomStay = function () {
   function RoomStay(stay, courses, reservation) {
@@ -890,62 +858,6 @@ var RoomStay = function () {
   return RoomStay;
 }();
 
-// Room ID's allowed for a TTC stay
-
-
-var TTC_ROOM_IDS = ['TENT_SPACE', 'TENT_HUT', 'DORMITORY'];
-
-// Dates of TTC, including the 1 free day
-var TTC_DATES = [{
-  label: 'April 4 — May 1, 2017',
-  checkInDate: createMoment('2017-04-03'),
-  checkOutDate: createMoment('2017-05-03')
-}, {
-  label: 'May 4 — 31, 2017',
-  checkInDate: createMoment('2017-05-03'),
-  checkOutDate: createMoment('2017-06-02')
-}, {
-  label: 'June 3 — 30, 2017',
-  checkInDate: createMoment('2017-06-02'),
-  checkOutDate: createMoment('2017-07-02')
-}, {
-  label: 'July 3 — 30, 2017',
-  checkInDate: createMoment('2017-07-02'),
-  checkOutDate: createMoment('2017-08-01')
-}, {
-  label: 'November 4 — December 1, 2017',
-  checkInDate: createMoment('2017-11-03'),
-  checkOutDate: createMoment('2017-12-03')
-}, {
-  label: 'December 4 — 31, 2017',
-  checkInDate: createMoment('2017-12-03'),
-  checkOutDate: createMoment('2018-01-03')
-}, {
-  label: 'January 4 — 31, 2018',
-  checkInDate: createMoment('2018-01-03'),
-  checkOutDate: createMoment('2018-02-02')
-}, {
-  label: 'February 3 — March 2, 2018',
-  checkInDate: createMoment('2018-02-02'),
-  checkOutDate: createMoment('2018-03-04')
-}, {
-  label: 'March 7 — April 3, 2018',
-  checkInDate: createMoment('2018-03-06'),
-  checkOutDate: createMoment('2018-04-05')
-}, {
-  label: 'May 6 — June 2, 2018',
-  checkInDate: createMoment('2018-05-05'),
-  checkOutDate: createMoment('2018-06-04')
-}, {
-  label: 'June 5 — July 2, 2018',
-  checkInDate: createMoment('2018-06-04'),
-  checkOutDate: createMoment('2018-07-04')
-}, {
-  label: 'July 5 — August 1, 2018',
-  checkInDate: createMoment('2018-07-04'),
-  checkOutDate: createMoment('2018-08-03')
-}];
-
 var TTCStay = function (_RoomStay) {
   inherits(TTCStay, _RoomStay);
 
@@ -957,21 +869,12 @@ var TTCStay = function (_RoomStay) {
   createClass(TTCStay, [{
     key: 'getDailyRoomYVPRate',
     value: function getDailyRoomYVPRate() {
-      var packagePrice = void 0;
-      switch (this.roomCategory.id) {
-        case 'TENT_SPACE':
-          packagePrice = 2400;
-          break;
-        case 'DORMITORY':
-          packagePrice = 3255;
-          break;
-        case 'TENT_HUT':
-          packagePrice = 3490;
-          break;
+      if (!ttc.prices[this.roomCategory.id]) {
+        throw new Error('No TTC price for room "' + this.roomCategory.id + '"');
       }
       return [{
         date: this.checkInDate(),
-        room: packagePrice,
+        room: ttc.prices[this.roomCategory.id],
         yvp: 0
       }];
     }
@@ -990,15 +893,6 @@ var StayFactory = function () {
       if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation);
       if (stay.type === 'TTC') return new TTCStay(stay, courses, reservation);
       throw new Error('Invalid stay type: ' + stay.type);
-    }
-  }, {
-    key: 'getTTCDates',
-    value: function getTTCDates() {
-      return _$3(TTC_DATES, function (date) {
-        return TTC_ROOM_IDS.map(function (roomId) {
-          return _$1({ roomId: roomId }, date);
-        });
-      });
     }
   }]);
   return StayFactory;
@@ -1062,7 +956,7 @@ var ReservationCalculator = function () {
     this.reservation = {
       adults: adults,
       children: children,
-      nights: _$5(stays, function (stay) {
+      nights: _$1(stays, function (stay) {
         return createMoment(stay.checkOutDate).diff(createMoment(stay.checkInDate), 'days');
       })
     };
@@ -1106,17 +1000,17 @@ var ReservationCalculator = function () {
   }, {
     key: 'getTotalRoom',
     value: function getTotalRoom() {
-      return _$4(_$5(_$6(this.getDailyRoomYVP()), 'room'), 2);
+      return _(_$1(_$2(this.getDailyRoomYVP()), 'room'), 2);
     }
   }, {
     key: 'getTotalYVP',
     value: function getTotalYVP() {
-      return _$4(_$5(_$6(this.getDailyRoomYVP()), 'yvp'), 2);
+      return _(_$1(_$2(this.getDailyRoomYVP()), 'yvp'), 2);
     }
   }, {
     key: 'getTotalCourse',
     value: function getTotalCourse() {
-      return _$4(_$5(this.courses, function (course) {
+      return _(_$1(this.courses, function (course) {
         return course.totalCost();
       }), 2);
     }
