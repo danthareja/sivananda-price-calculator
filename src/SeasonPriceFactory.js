@@ -27,14 +27,14 @@ class SeasonPrice {
   }
 
   getSingleInDoubleOccupancyRoomDiscount() {
-     return 0
+     return 0 // percent
   }
 }
 
 class WinterSeasonPrice extends SeasonPrice {}
 class SummerSeasonPrice extends SeasonPrice {
   getSingleInDoubleOccupancyRoomDiscount() {
-    return 15
+    return 15 // percent
   }
 }
 

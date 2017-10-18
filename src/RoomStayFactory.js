@@ -13,11 +13,10 @@ class RoomStay {
     this.courses = courses
     this.reservation = reservation
 
-    this.roomDiscount = new Discount(stay.roomDiscount || {})
-    this.yvpDiscount = new Discount(stay.yvpDiscount || {})
+    this.roomDiscount = new Discount(stay.roomDiscount)
+    this.yvpDiscount = new Discount(stay.yvpDiscount)
 
-    const isSharing = reservation.adults + reservation.children > 1
-    this.roomCategory = RoomCategoryFactory.createRoomCategory(stay.roomId, isSharing)
+    this.roomCategory = RoomCategoryFactory.createRoomCategory(stay.roomId, reservation)
   }
 
   getDateRange() {
@@ -29,7 +28,7 @@ class RoomStay {
   }
 
   getRoomRate(date) {
-    return this.roomCategory.getRoomBaseRate(date, this.reservation.nights) * (this.reservation.adults + this.reservation.children / 2)
+    return this.roomCategory.getRoomRate(date)
   }
 
   getYVPRate(date) {
@@ -39,6 +38,7 @@ class RoomStay {
       return 0
     }
 
+    // YVP only applies to adults
     return SeasonPriceFactory.createSeasonPrice(date).getYVPRate() * this.reservation.adults
   }
 

@@ -417,7 +417,7 @@ var SeasonPrice = function () {
   }, {
     key: 'getSingleInDoubleOccupancyRoomDiscount',
     value: function getSingleInDoubleOccupancyRoomDiscount() {
-      return 0;
+      return 0; // percent
     }
   }]);
   return SeasonPrice;
@@ -445,7 +445,7 @@ var SummerSeasonPrice = function (_SeasonPrice2) {
   createClass(SummerSeasonPrice, [{
     key: 'getSingleInDoubleOccupancyRoomDiscount',
     value: function getSingleInDoubleOccupancyRoomDiscount() {
-      return 15;
+      return 15; // percent
     }
   }]);
   return SummerSeasonPrice;
@@ -564,11 +564,12 @@ var rooms = [{
 }];
 
 var AbstractRoomCategory = function () {
-  function AbstractRoomCategory(id, isSharing) {
+  function AbstractRoomCategory(id, isWillingToShare, reservation) {
     classCallCheck(this, AbstractRoomCategory);
 
     this.id = id;
-    this.isSharing = isSharing;
+    this.reservation = reservation;
+    this.isSharing = isWillingToShare || reservation.adults + reservation.children > 1;
   }
 
   createClass(AbstractRoomCategory, [{
@@ -582,16 +583,20 @@ var AbstractRoomCategory = function () {
       return seasonPrice.getSingleInDoubleOccupancyRoomDiscount();
     }
   }, {
-    key: 'getRoomBaseRate',
-    value: function getRoomBaseRate(date, nights) {
+    key: 'getRoomRate',
+    value: function getRoomRate(date) {
       var seasonPrice = SeasonPriceFactory.createSeasonPrice(date);
       var roomCategory = this.isSharing ? this.getRoomCategoryForShared() : this;
 
+      var baseRate = void 0;
+
       if (this.isSharing) {
-        return seasonPrice.getRoomBaseRate(roomCategory.id, nights);
+        baseRate = seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights);
       } else {
-        return seasonPrice.getRoomBaseRate(roomCategory.id, nights) * this.bedCount() * (100 - this.getSingleInDoubleOccupancyRoomDiscount(seasonPrice)) / 100;
+        baseRate = seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights) * this.bedCount() * (100 - this.getSingleInDoubleOccupancyRoomDiscount(seasonPrice)) / 100;
       }
+
+      return baseRate * (this.reservation.adults + this.reservation.children / 2);
     }
 
     // in some room categories such as GardenDoubleRoomCategory the price is taken from another room category,
@@ -616,8 +621,10 @@ var AbstractSingleBedRoomCategory = function (_AbstractRoomCategory) {
 
   createClass(AbstractSingleBedRoomCategory, [{
     key: 'getSingleInDoubleOccupancyRoomDiscount',
+
+    // This is not a double occupancy room. Single occupancy discount never applies here.
     value: function getSingleInDoubleOccupancyRoomDiscount(seasonPrice) {
-      return 0; // This is not a double occupancy room. Single occupancy discount never applies here.
+      return 0;
     }
   }, {
     key: 'bedCount',
@@ -756,42 +763,42 @@ var RoomCategoryFactory = function () {
     }
   }, {
     key: 'createRoomCategory',
-    value: function createRoomCategory(roomId, isSharing) {
+    value: function createRoomCategory(roomId, reservation) {
       switch (roomId) {
         case 'BEACHFRONT':
-          return new BeachFrontRoomCategory('BEACHFRONT', false || isSharing);
+          return new BeachFrontRoomCategory('BEACHFRONT', false, reservation);
         case 'BEACHFRONT_SHARING':
-          return new BeachFrontRoomCategory('BEACHFRONT', true || isSharing);
+          return new BeachFrontRoomCategory('BEACHFRONT', true, reservation);
         case 'OCEAN_VIEW':
-          return new OceanViewRoomCategory('OCEAN_VIEW', false || isSharing);
+          return new OceanViewRoomCategory('OCEAN_VIEW', false, reservation);
         case 'OCEAN_VIEW_SHARING':
-          return new OceanViewRoomCategory('OCEAN_VIEW', true || isSharing);
+          return new OceanViewRoomCategory('OCEAN_VIEW', true, reservation);
         case 'BEACH_HUT':
-          return new BeachHutRoomCategory('BEACH_HUT', false || isSharing);
+          return new BeachHutRoomCategory('BEACH_HUT', false, reservation);
         case 'BEACH_HUT_SHARING':
-          return new BeachHutRoomCategory('BEACH_HUT', true || isSharing);
+          return new BeachHutRoomCategory('BEACH_HUT', true, reservation);
         case 'GARDEN_BATH':
-          return new GardenBathRoomCategory('GARDEN_BATH', false || isSharing);
+          return new GardenBathRoomCategory('GARDEN_BATH', false, reservation);
         case 'GARDEN_BATH_SHARING':
-          return new GardenBathRoomCategory('GARDEN_BATH', true || isSharing);
+          return new GardenBathRoomCategory('GARDEN_BATH', true, reservation);
         case 'GARDEN_DOUBLE':
-          return new GardenDoubleRoomCategory('GARDEN_DOUBLE', false || isSharing);
+          return new GardenDoubleRoomCategory('GARDEN_DOUBLE', false, reservation);
         case 'GARDEN_DOUBLE_SHARING':
-          return new GardenDoubleRoomCategory('GARDEN_DOUBLE', true || isSharing);
+          return new GardenDoubleRoomCategory('GARDEN_DOUBLE', true, reservation);
         case 'GARDEN_SHARED':
           return new GardenSharedRoomCategory('GARDEN_SHARED', false);
         case 'GARDEN_SHARED_SHARING':
-          return new GardenSharedRoomCategory('GARDEN_SHARED', true || isSharing);
+          return new GardenSharedRoomCategory('GARDEN_SHARED', true, reservation);
         case 'GARDEN_SINGLE':
-          return new GardenSingleRoomCategory('GARDEN_SINGLE', false || isSharing);
+          return new GardenSingleRoomCategory('GARDEN_SINGLE', false, reservation);
         case 'DORMITORY':
-          return new DormitoryRoomCategory('DORMITORY', false || isSharing);
+          return new DormitoryRoomCategory('DORMITORY', false, reservation);
         case 'TENT_HUT':
-          return new TentHutRoomCategory('TENT_HUT', false || isSharing);
+          return new TentHutRoomCategory('TENT_HUT', false, reservation);
         case 'TENT_SPACE':
-          return new TentSpaceRoomCategory('TENT_SPACE', false || isSharing);
+          return new TentSpaceRoomCategory('TENT_SPACE', false, reservation);
         case 'NULL_ROOM':
-          return new TentSpaceRoomCategory('NULL_ROOM', false || isSharing);
+          return new TentSpaceRoomCategory('NULL_ROOM', false, reservation);
         default:
           throw new Error('Invalid roomId: "' + roomId + '"');
       }
@@ -871,8 +878,7 @@ var RoomStay = function () {
     this.roomDiscount = new Discount(stay.roomDiscount || {});
     this.yvpDiscount = new Discount(stay.yvpDiscount || {});
 
-    var isSharing = reservation.adults + reservation.children > 1;
-    this.roomCategory = RoomCategoryFactory.createRoomCategory(stay.roomId, isSharing);
+    this.roomCategory = RoomCategoryFactory.createRoomCategory(stay.roomId, reservation);
   }
 
   createClass(RoomStay, [{
@@ -887,7 +893,7 @@ var RoomStay = function () {
   }, {
     key: 'getRoomRate',
     value: function getRoomRate(date) {
-      return this.roomCategory.getRoomBaseRate(date, this.reservation.nights) * (this.reservation.adults + this.reservation.children / 2);
+      return this.roomCategory.getRoomRate(date);
     }
   }, {
     key: 'getYVPRate',
