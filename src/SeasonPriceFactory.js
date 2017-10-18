@@ -2,11 +2,6 @@ import moment from 'moment'
 import * as _ from './lodash'
 import seasons from './data/seasons'
 
-// const seasons = seasonData.map(season => _.assign(season, {
-//   startDate: createMoment(season.startDate),
-//   endDate: createMoment(season.endDate)
-// }))
-
 class SeasonPrice {
   constructor(season) {
     this.season = season
@@ -39,16 +34,20 @@ class SeasonPrice {
 class WinterSeasonPrice extends SeasonPrice {}
 class SummerSeasonPrice extends SeasonPrice {
   getSingleInDoubleOccupancyRoomDiscount() {
-      return 15
+    return 15
   }
 }
 
 export default class SeasonPriceFactory {
+  static getSeasons() {
+    return seasons
+  }
+
   static getSeasonFromDate(date) {
     if (!moment.isMoment(date)) {
       date = moment(date)
     }
-    return seasons.find(season => {
+    return SeasonPriceFactory.getSeasons().find(season => {
       return date.isBetween(season.startDate, season.endDate, 'days', '[]')
     })
   };

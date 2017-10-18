@@ -11,7 +11,7 @@ export default class Course {
 
   doesYVPApply(date) {
     // YVP is not included duing the duration of the course and one night before
-    return date.isBetween(this.startDate.clone().subtract(1, 'days'), this.endDate, null, [])
+    return date.isBetween(this.startDate.clone().subtract(1, 'days'), this.endDate, 'days', [])
   }
 
   totalCost() {

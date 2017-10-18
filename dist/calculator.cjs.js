@@ -5,11 +5,11 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var moment = _interopDefault(require('moment'));
-var _$1 = _interopDefault(require('lodash.assign'));
-var _$2 = _interopDefault(require('lodash.flatmap'));
-var _$3 = _interopDefault(require('lodash.round'));
-var _$4 = _interopDefault(require('lodash.sumby'));
-var _$5 = _interopDefault(require('lodash.values'));
+var lodash_assign = _interopDefault(require('lodash.assign'));
+var lodash_flatmap = _interopDefault(require('lodash.flatmap'));
+var _ = _interopDefault(require('lodash.round'));
+var _$1 = _interopDefault(require('lodash.sumby'));
+var _$2 = _interopDefault(require('lodash.values'));
 
 // Import only used functions from lodash to keep bundle size down
 
@@ -380,11 +380,6 @@ var seasons = [{
   }
 }];
 
-// const seasons = seasonData.map(season => _.assign(season, {
-//   startDate: createMoment(season.startDate),
-//   endDate: createMoment(season.endDate)
-// }))
-
 var SeasonPrice = function () {
   function SeasonPrice(season) {
     classCallCheck(this, SeasonPrice);
@@ -464,12 +459,17 @@ var SeasonPriceFactory = function () {
   }
 
   createClass(SeasonPriceFactory, null, [{
+    key: 'getSeasons',
+    value: function getSeasons() {
+      return seasons;
+    }
+  }, {
     key: 'getSeasonFromDate',
     value: function getSeasonFromDate(date) {
       if (!moment.isMoment(date)) {
         date = moment(date);
       }
-      return seasons.find(function (season) {
+      return SeasonPriceFactory.getSeasons().find(function (season) {
         return date.isBetween(season.startDate, season.endDate, 'days', '[]');
       });
     }
@@ -752,20 +752,9 @@ var RoomCategoryFactory = function () {
   }
 
   createClass(RoomCategoryFactory, null, [{
-    key: 'getRoomById',
-    value: function getRoomById(id) {
-      var room = _.find(rooms, _.matchesProperty('id', id));
-      if (!room) {
-        throw new Error('Could not find a room with id: ' + id);
-      }
-      return room;
-    }
-  }, {
-    key: 'filterRoomsByOccupancy',
-    value: function filterRoomsByOccupancy(occupancy) {
-      return rooms.filter(function (room) {
-        return occupancy <= room.maxOccupancy;
-      });
+    key: 'getRooms',
+    value: function getRooms() {
+      return rooms;
     }
   }, {
     key: 'createRoomCategory',
@@ -962,13 +951,9 @@ var StayFactory = function () {
   }
 
   createClass(StayFactory, null, [{
-    key: 'getTTCDates',
-    value: function getTTCDates() {
-      return _$2(ttc.sessions, function (date) {
-        return ttc.rooms.map(function (roomId) {
-          return _$1({ roomId: roomId }, date);
-        });
-      });
+    key: 'getTTCData',
+    value: function getTTCData() {
+      return ttc;
     }
   }, {
     key: 'createStay',
@@ -999,7 +984,7 @@ var Course = function () {
     key: 'doesYVPApply',
     value: function doesYVPApply(date) {
       // YVP is not included duing the duration of the course and one night before
-      return date.isBetween(this.startDate.clone().subtract(1, 'days'), this.endDate, null, []);
+      return date.isBetween(this.startDate.clone().subtract(1, 'days'), this.endDate, 'days', []);
     }
   }, {
     key: 'totalCost',
@@ -1027,7 +1012,7 @@ var ReservationCalculator = function () {
     this.reservation = {
       adults: adults,
       children: children,
-      nights: _$4(stays, function (stay) {
+      nights: _$1(stays, function (stay) {
         return moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days');
       })
     };
@@ -1071,17 +1056,17 @@ var ReservationCalculator = function () {
   }, {
     key: 'getTotalRoom',
     value: function getTotalRoom() {
-      return _$3(_$4(_$5(this.getDailyRoomYVP()), 'room'), 2);
+      return _(_$1(_$2(this.getDailyRoomYVP()), 'room'), 2);
     }
   }, {
     key: 'getTotalYVP',
     value: function getTotalYVP() {
-      return _$3(_$4(_$5(this.getDailyRoomYVP()), 'yvp'), 2);
+      return _(_$1(_$2(this.getDailyRoomYVP()), 'yvp'), 2);
     }
   }, {
     key: 'getTotalCourse',
     value: function getTotalCourse() {
-      return _$3(_$4(this.courses, function (course) {
+      return _(_$1(this.courses, function (course) {
         return course.totalCost();
       }), 2);
     }

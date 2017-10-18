@@ -65,12 +65,8 @@ class TTCStay extends RoomStay {
 }
 
 export default class StayFactory{
-  static getTTCDates() {
-    return _.flatMap(ttc.sessions, date =>
-      ttc.rooms.map(roomId => {
-        return _.assign({ roomId }, date)
-      })
-    )
+  static getTTCData() {
+    return ttc;
   }
 
   static createStay(stay, courses, reservation) {
