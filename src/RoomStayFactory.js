@@ -64,7 +64,7 @@ class TTCStay extends RoomStay {
   }
 }
 
-export default class StayFactory{
+export default class StayFactory {
   static getTTCData() {
     return ttc;
   }

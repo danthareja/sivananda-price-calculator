@@ -5,8 +5,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var moment = _interopDefault(require('moment'));
-var lodash_assign = _interopDefault(require('lodash.assign'));
-var lodash_flatmap = _interopDefault(require('lodash.flatmap'));
 var _ = _interopDefault(require('lodash.round'));
 var _$1 = _interopDefault(require('lodash.sumby'));
 var _$2 = _interopDefault(require('lodash.values'));

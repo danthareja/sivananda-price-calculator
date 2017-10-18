@@ -19,8 +19,6 @@
     "test": "mocha --require babel-polyfill --compilers js:babel-register"
   },
   "dependencies": {
-    "lodash.assign": "^4.2.0",
-    "lodash.flatmap": "^4.5.0",
     "lodash.round": "^4.0.4",
     "lodash.sumby": "^4.6.0",
     "lodash.values": "^4.3.0",

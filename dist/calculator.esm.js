@@ -1,6 +1,4 @@
 import moment from 'moment';
-import lodash_assign from 'lodash.assign';
-import lodash_flatmap from 'lodash.flatmap';
 import _ from 'lodash.round';
 import _$1 from 'lodash.sumby';
 import _$2 from 'lodash.values';
