@@ -28,46 +28,6 @@ var formatMoment = function formatMoment(moment) {
   return moment.format(format);
 };
 
-var DISCOUNT = {
-  PERCENT: 'PERCENT',
-  FIXED: 'FIXED'
-};
-
-var STAY = {
-  ROOM: 'ROOM',
-  TTC: 'TTC'
-};
-
-var SEASON = {
-  SUMMER_2015: 'SUMMER_2015',
-  WINTER_2016: 'WINTER_2016',
-  SUMMER_2016: 'SUMMER_2016',
-  WINTER_2017: 'WINTER_2017',
-  SUMMER_2017: 'SUMMER_2017',
-  WINTER_2018: 'WINTER_2018',
-  SUMMER_2018: 'SUMMER_2018'
-};
-
-var ROOM_ID = {
-  BEACHFRONT: 'BEACHFRONT',
-  BEACHFRONT_SHARING: 'BEACHFRONT_SHARING',
-  OCEAN_VIEW: 'OCEANVIEW',
-  OCEAN_VIEW_SHARING: 'OCEANVIEW_SHARING',
-  BEACH_HUT: 'BEACH_HUT',
-  BEACH_HUT_SHARING: 'BEACH_HUT_SHARING',
-  GARDEN_BATH: 'GARDEN_BATH',
-  GARDEN_BATH_SHARING: 'GARDEN_BATH_SHARING',
-  GARDEN_DOUBLE: 'GARDEN_DOUBLE',
-  GARDEN_DOUBLE_SHARING: 'GARDEN_DOUBLE_SHARING',
-  GARDEN_SINGLE: 'GARDEN_SINGLE',
-  GARDEN_SHARED: 'GARDEN_SHARED',
-  GARDEN_SHARED_SHARING: 'GARDEN_SHARED_SHARING',
-  DORMITORY: 'DORMITORY',
-  TENT_HUT: 'TENT_HUT',
-  TENT_SPACE: 'TENT_SPACE',
-  NULL_ROOM: 'NULL_ROOM'
-};
-
 var asyncGenerator = function () {
   function AwaitValue(value) {
     this.value = value;
@@ -213,20 +173,7 @@ var createClass = function () {
 
 
 
-var defineProperty = function (obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
 
-  return obj;
-};
 
 
 
@@ -268,7 +215,7 @@ var Discount = function () {
   function Discount() {
     var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         _ref$type = _ref.type,
-        type = _ref$type === undefined ? DISCOUNT.FIXED : _ref$type,
+        type = _ref$type === undefined ? 'FIXED' : _ref$type,
         _ref$value = _ref.value,
         value = _ref$value === undefined ? 0 : _ref$value;
 
@@ -282,9 +229,9 @@ var Discount = function () {
     key: 'calculateAmount',
     value: function calculateAmount(price) {
       switch (this.type) {
-        case DISCOUNT.PERCENT:
+        case 'PERCENT':
           return price * (this.value / 100);
-        case DISCOUNT.FIXED:
+        case 'FIXED':
           return this.value;
         default:
           return 0;
@@ -299,46 +246,96 @@ var Discount = function () {
   return Discount;
 }();
 
-var _yvpRates;
-var _SEASON$SUMMER_;
-var _SEASON$WINTER_;
-var _SEASON$WINTER_2;
-var _SEASON$SUMMER_2;
-var _roomRates;
-
 var seasons = [{
-  type: SEASON.SUMMER_2015,
+  type: 'SUMMER_2015',
   startDate: createMoment('2015-06-01'),
   endDate: createMoment('2015-10-31')
 }, {
-  type: SEASON.WINTER_2016,
+  type: 'WINTER_2016',
   startDate: createMoment('2015-11-01'),
   endDate: createMoment('2016-03-31')
 }, {
-  type: SEASON.SUMMER_2016,
+  type: 'SUMMER_2016',
   startDate: createMoment('2016-04-01'),
   endDate: createMoment('2016-10-31')
 }, {
-  type: SEASON.WINTER_2017,
+  type: 'WINTER_2017',
   startDate: createMoment('2016-11-01'),
   endDate: createMoment('2017-06-30')
 }, {
-  type: SEASON.SUMMER_2017,
+  type: 'SUMMER_2017',
   startDate: createMoment('2017-07-01'),
   endDate: createMoment('2017-10-31')
 }, {
-  type: SEASON.WINTER_2018,
+  type: 'WINTER_2018',
   startDate: createMoment('2017-11-01'),
   endDate: createMoment('2018-06-30')
 }, {
-  type: SEASON.SUMMER_2018,
+  type: 'SUMMER_2018',
   startDate: createMoment('2018-07-01'),
   endDate: createMoment('2018-10-31')
 }];
 
-var yvpRates = (_yvpRates = {}, defineProperty(_yvpRates, SEASON.SUMMER_2015, 20), defineProperty(_yvpRates, SEASON.WINTER_2016, 32), defineProperty(_yvpRates, SEASON.WINTER_2017, 32), defineProperty(_yvpRates, SEASON.SUMMER_2017, 20), _yvpRates);
+var yvpRates = {
+  SUMMER_2015: 20,
+  WINTER_2016: 32,
+  WINTER_2017: 32,
+  SUMMER_2017: 20
+};
 
-var roomRates = (_roomRates = {}, defineProperty(_roomRates, SEASON.SUMMER_2015, (_SEASON$SUMMER_ = {}, defineProperty(_SEASON$SUMMER_, ROOM_ID.BEACHFRONT, [136, 128, 121, 116]), defineProperty(_SEASON$SUMMER_, ROOM_ID.OCEAN_VIEW, [129, 121, 114, 109]), defineProperty(_SEASON$SUMMER_, ROOM_ID.BEACH_HUT, [109, 102, 97, 93]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_BATH, [121, 113, 107, 103]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_DOUBLE, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_SHARED, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_, ROOM_ID.GARDEN_SINGLE, [116, 108, 103, 99]), defineProperty(_SEASON$SUMMER_, ROOM_ID.DORMITORY, [83, 77, 73, 70]), defineProperty(_SEASON$SUMMER_, ROOM_ID.TENT_HUT, [79, 74, 70, 67]), defineProperty(_SEASON$SUMMER_, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$SUMMER_, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$SUMMER_)), defineProperty(_roomRates, SEASON.WINTER_2016, (_SEASON$WINTER_ = {}, defineProperty(_SEASON$WINTER_, ROOM_ID.BEACHFRONT, [147, 137, 131, 127]), defineProperty(_SEASON$WINTER_, ROOM_ID.OCEAN_VIEW, [140, 130, 124, 119]), defineProperty(_SEASON$WINTER_, ROOM_ID.BEACH_HUT, [120, 112, 106, 102]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_BATH, [131, 123, 116, 111]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_DOUBLE, [109, 103, 98, 94]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_SHARED, [109, 103, 98, 94]), defineProperty(_SEASON$WINTER_, ROOM_ID.GARDEN_SINGLE, [127, 119, 113, 108]), defineProperty(_SEASON$WINTER_, ROOM_ID.DORMITORY, [94, 88, 84, 81]), defineProperty(_SEASON$WINTER_, ROOM_ID.TENT_HUT, [79, 74, 70, 67]), defineProperty(_SEASON$WINTER_, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$WINTER_, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$WINTER_)), defineProperty(_roomRates, SEASON.WINTER_2017, (_SEASON$WINTER_2 = {}, defineProperty(_SEASON$WINTER_2, ROOM_ID.BEACHFRONT, [159, 148, 141, 136]), defineProperty(_SEASON$WINTER_2, ROOM_ID.OCEAN_VIEW, [147, 137, 130, 125]), defineProperty(_SEASON$WINTER_2, ROOM_ID.BEACH_HUT, [127, 119, 112, 108]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_BATH, [138, 129, 122, 117]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_DOUBLE, [138, 130, 124, 118]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_SHARED, [112, 106, 101, 97]), defineProperty(_SEASON$WINTER_2, ROOM_ID.GARDEN_SINGLE, [133, 125, 119, 113]), defineProperty(_SEASON$WINTER_2, ROOM_ID.DORMITORY, [80, 75, 71, 69]), defineProperty(_SEASON$WINTER_2, ROOM_ID.TENT_HUT, [82, 77, 73, 70]), defineProperty(_SEASON$WINTER_2, ROOM_ID.TENT_SPACE, [69, 64, 61, 58]), defineProperty(_SEASON$WINTER_2, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$WINTER_2)), defineProperty(_roomRates, SEASON.SUMMER_2017, (_SEASON$SUMMER_2 = {}, defineProperty(_SEASON$SUMMER_2, ROOM_ID.BEACHFRONT, [136, 128, 121, 116]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.OCEAN_VIEW, [129, 121, 114, 109]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.BEACH_HUT, [109, 102, 97, 93]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_BATH, [121, 113, 107, 103]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_DOUBLE, [120, 112, 106, 102]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_SHARED, [99, 93, 88, 84]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.GARDEN_SINGLE, [116, 108, 103, 99]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.DORMITORY, [80, 75, 71, 69]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.TENT_HUT, [82, 77, 73, 70]), defineProperty(_SEASON$SUMMER_2, ROOM_ID.NULL_ROOM, [0, 0, 0, 0]), _SEASON$SUMMER_2)), _roomRates);
+var roomRates = {
+  SUMMER_2015: {
+    BEACHFRONT: [136, 128, 121, 116],
+    OCEAN_VIEW: [129, 121, 114, 109],
+    BEACH_HUT: [109, 102, 97, 93],
+    GARDEN_BATH: [121, 113, 107, 103],
+    GARDEN_DOUBLE: [99, 93, 88, 84],
+    GARDEN_SHARED: [99, 93, 88, 84],
+    GARDEN_SINGLE: [116, 108, 103, 99],
+    DORMITORY: [83, 77, 73, 70],
+    TENT_HUT: [79, 74, 70, 67],
+    TENT_SPACE: [69, 64, 61, 58],
+    NULL_ROOM: [0, 0, 0, 0]
+  },
+  WINTER_2016: {
+    BEACHFRONT: [147, 137, 131, 127],
+    OCEAN_VIEW: [140, 130, 124, 119],
+    BEACH_HUT: [120, 112, 106, 102],
+    GARDEN_BATH: [131, 123, 116, 111],
+    GARDEN_DOUBLE: [109, 103, 98, 94],
+    GARDEN_SHARED: [109, 103, 98, 94],
+    GARDEN_SINGLE: [127, 119, 113, 108],
+    DORMITORY: [94, 88, 84, 81],
+    TENT_HUT: [79, 74, 70, 67],
+    TENT_SPACE: [69, 64, 61, 58],
+    NULL_ROOM: [0, 0, 0, 0]
+  },
+  WINTER_2017: {
+    BEACHFRONT: [159, 148, 141, 136],
+    OCEAN_VIEW: [147, 137, 130, 125],
+    BEACH_HUT: [127, 119, 112, 108],
+    GARDEN_BATH: [138, 129, 122, 117],
+    GARDEN_DOUBLE: [138, 130, 124, 118],
+    GARDEN_SHARED: [112, 106, 101, 97],
+    GARDEN_SINGLE: [133, 125, 119, 113],
+    DORMITORY: [80, 75, 71, 69],
+    TENT_HUT: [82, 77, 73, 70],
+    TENT_SPACE: [69, 64, 61, 58],
+    NULL_ROOM: [0, 0, 0, 0]
+  },
+  SUMMER_2017: {
+    BEACHFRONT: [136, 128, 121, 116],
+    OCEAN_VIEW: [129, 121, 114, 109],
+    BEACH_HUT: [109, 102, 97, 93],
+    GARDEN_BATH: [121, 113, 107, 103],
+    GARDEN_DOUBLE: [120, 112, 106, 102],
+    GARDEN_SHARED: [99, 93, 88, 84],
+    GARDEN_SINGLE: [116, 108, 103, 99],
+    DORMITORY: [80, 75, 71, 69],
+    TENT_HUT: [82, 77, 73, 70],
+    NULL_ROOM: [0, 0, 0, 0]
+  }
+};
 
 var SeasonPrice = function () {
   function SeasonPrice(type) {
@@ -429,23 +426,23 @@ var SeasonPriceFactory = function () {
       }
 
       switch (season.type) {
-        case SEASON.SUMMER_2015:
-          return new WinterSeasonPrice(SEASON.SUMMER_2015);
-        case SEASON.WINTER_2016:
-          return new WinterSeasonPrice(SEASON.WINTER_2016);
+        case 'SUMMER_2015':
+          return new WinterSeasonPrice('SUMMER_2015');
+        case 'WINTER_2016':
+          return new WinterSeasonPrice('WINTER_2016');
         // The prices for Summer 2016 and Winter 2018 are the same as Winter 2017
-        // Reusing SEASON.WINTER_2017 avoids inputting
+        // Reusing 'WINTER_2017' avoids inputting
         // duplicate price data and risking a type
-        case SEASON.SUMMER_2016:
-        case SEASON.WINTER_2017:
-        case SEASON.WINTER_2018:
-          return new WinterSeasonPrice(SEASON.WINTER_2017);
+        case 'SUMMER_2016':
+        case 'WINTER_2017':
+        case 'WINTER_2018':
+          return new WinterSeasonPrice('WINTER_2017');
         // The prices for Summer 2018 are the same as Summer 2017
-        // Reusing SEASON.SUMMER_2017 avoids inputting
+        // Reusing 'SUMMER_2017' avoids inputting
         // duplicate price data and risking a typo
-        case SEASON.SUMMER_2017:
-        case SEASON.SUMMER_2018:
-          return new SummerSeasonPrice(SEASON.SUMMER_2017);
+        case 'SUMMER_2017':
+        case 'SUMMER_2018':
+          return new SummerSeasonPrice('SUMMER_2017');
         default:
           throw new Error('Unexpected season type: "' + season.type + '"');
       }
@@ -455,71 +452,71 @@ var SeasonPriceFactory = function () {
 }();
 
 var rooms = [{
-  id: ROOM_ID.BEACHFRONT,
+  id: 'BEACHFRONT',
   label: 'Beachfront Deluxe Suite (whole)',
   maxOccupancy: 6
 }, {
-  id: ROOM_ID.BEACHFRONT_SHARING,
+  id: 'BEACHFRONT_SHARING',
   label: 'Beachfront Deluxe Suite (sharing)',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.OCEAN_VIEW,
+  id: 'OCEAN_VIEW',
   label: 'Ocean View Deluxe (whole)',
   maxOccupancy: 4
 }, {
-  id: ROOM_ID.OCEAN_VIEW_SHARING,
+  id: 'OCEAN_VIEW_SHARING',
   label: 'Ocean View Deluxe (sharing)',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.BEACH_HUT,
+  id: 'BEACH_HUT',
   label: 'Beach Hut (whole)',
   maxOccupancy: 4
 }, {
-  id: ROOM_ID.BEACH_HUT_SHARING,
+  id: 'BEACH_HUT_SHARING',
   label: 'Beach Hut (sharing)',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.GARDEN_BATH,
+  id: 'GARDEN_BATH',
   label: 'Garden Room with Bath (whole)',
   maxOccupancy: 4
 }, {
-  id: ROOM_ID.GARDEN_BATH_SHARING,
+  id: 'GARDEN_BATH_SHARING',
   label: 'Garden Room with Bath (sharing)',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.GARDEN_DOUBLE,
+  id: 'GARDEN_DOUBLE',
   label: 'Garden Room Double Bed (whole)',
   maxOccupancy: 4
 }, {
-  id: ROOM_ID.GARDEN_DOUBLE_SHARING,
+  id: 'GARDEN_DOUBLE_SHARING',
   label: 'Garden Room Double Bed (sharing)',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.GARDEN_SINGLE,
+  id: 'GARDEN_SINGLE',
   label: 'Garden Room Single',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.GARDEN_SHARED,
+  id: 'GARDEN_SHARED',
   label: 'Garden Room Shared (whole)',
   maxOccupancy: 3
 }, {
-  id: ROOM_ID.GARDEN_SHARED_SHARING,
+  id: 'GARDEN_SHARED_SHARING',
   label: 'Garden Room Shared (sharing)',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.DORMITORY,
+  id: 'DORMITORY',
   label: 'Dormitory',
   maxOccupancy: 4
 }, {
-  id: ROOM_ID.TENT_HUT,
+  id: 'TENT_HUT',
   label: 'Tent Hut',
   maxOccupancy: 2
 }, {
-  id: ROOM_ID.TENT_SPACE,
+  id: 'TENT_SPACE',
   label: 'Tent Space',
   maxOccupancy: 1
 }, {
-  id: ROOM_ID.NULL_ROOM,
+  id: 'NULL_ROOM',
   label: 'No Room (only course)',
   maxOccupancy: 1
 }];
@@ -644,7 +641,7 @@ var GardenDoubleRoomCategory = function (_AbstractSingleBedRoo) {
   createClass(GardenDoubleRoomCategory, [{
     key: 'getRoomCategoryForShared',
     value: function getRoomCategoryForShared() {
-      return RoomCategoryFactory.createRoomCategory(ROOM_ID.GARDEN_SHARED_SHARING);
+      return RoomCategoryFactory.createRoomCategory('GARDEN_SHARED_SHARING');
     }
   }]);
   return GardenDoubleRoomCategory;
@@ -730,40 +727,40 @@ var RoomCategoryFactory = function () {
     key: 'createRoomCategory',
     value: function createRoomCategory(roomId, isSharing) {
       switch (roomId) {
-        case ROOM_ID.BEACHFRONT:
-          return new BeachFrontRoomCategory(ROOM_ID.BEACHFRONT, false || isSharing);
-        case ROOM_ID.BEACHFRONT_SHARING:
-          return new BeachFrontRoomCategory(ROOM_ID.BEACHFRONT, true || isSharing);
-        case ROOM_ID.OCEAN_VIEW:
-          return new OceanViewRoomCategory(ROOM_ID.OCEAN_VIEW, false || isSharing);
-        case ROOM_ID.OCEAN_VIEW_SHARING:
-          return new OceanViewRoomCategory(ROOM_ID.OCEAN_VIEW, true || isSharing);
-        case ROOM_ID.BEACH_HUT:
-          return new BeachHutRoomCategory(ROOM_ID.BEACH_HUT, false || isSharing);
-        case ROOM_ID.BEACH_HUT_SHARING:
-          return new BeachHutRoomCategory(ROOM_ID.BEACH_HUT, true || isSharing);
-        case ROOM_ID.GARDEN_BATH:
-          return new GardenBathRoomCategory(ROOM_ID.GARDEN_BATH, false || isSharing);
-        case ROOM_ID.GARDEN_BATH_SHARING:
-          return new GardenBathRoomCategory(ROOM_ID.GARDEN_BATH, true || isSharing);
-        case ROOM_ID.GARDEN_DOUBLE:
-          return new GardenDoubleRoomCategory(ROOM_ID.GARDEN_DOUBLE, false || isSharing);
-        case ROOM_ID.GARDEN_DOUBLE_SHARING:
-          return new GardenDoubleRoomCategory(ROOM_ID.GARDEN_DOUBLE, true || isSharing);
-        case ROOM_ID.GARDEN_SHARED:
-          return new GardenSharedRoomCategory(ROOM_ID.GARDEN_SHARED, false);
-        case ROOM_ID.GARDEN_SHARED_SHARING:
-          return new GardenSharedRoomCategory(ROOM_ID.GARDEN_SHARED, true || isSharing);
-        case ROOM_ID.GARDEN_SINGLE:
-          return new GardenSingleRoomCategory(ROOM_ID.GARDEN_SINGLE, false || isSharing);
-        case ROOM_ID.DORMITORY:
-          return new DormitoryRoomCategory(ROOM_ID.DORMITORY, false || isSharing);
-        case ROOM_ID.TENT_HUT:
-          return new TentHutRoomCategory(ROOM_ID.TENT_HUT, false || isSharing);
-        case ROOM_ID.TENT_SPACE:
-          return new TentSpaceRoomCategory(ROOM_ID.TENT_SPACE, false || isSharing);
-        case ROOM_ID.NULL_ROOM:
-          return new TentSpaceRoomCategory(ROOM_ID.NULL_ROOM, false || isSharing);
+        case 'BEACHFRONT':
+          return new BeachFrontRoomCategory('BEACHFRONT', false || isSharing);
+        case 'BEACHFRONT_SHARING':
+          return new BeachFrontRoomCategory('BEACHFRONT', true || isSharing);
+        case 'OCEAN_VIEW':
+          return new OceanViewRoomCategory('OCEAN_VIEW', false || isSharing);
+        case 'OCEAN_VIEW_SHARING':
+          return new OceanViewRoomCategory('OCEAN_VIEW', true || isSharing);
+        case 'BEACH_HUT':
+          return new BeachHutRoomCategory('BEACH_HUT', false || isSharing);
+        case 'BEACH_HUT_SHARING':
+          return new BeachHutRoomCategory('BEACH_HUT', true || isSharing);
+        case 'GARDEN_BATH':
+          return new GardenBathRoomCategory('GARDEN_BATH', false || isSharing);
+        case 'GARDEN_BATH_SHARING':
+          return new GardenBathRoomCategory('GARDEN_BATH', true || isSharing);
+        case 'GARDEN_DOUBLE':
+          return new GardenDoubleRoomCategory('GARDEN_DOUBLE', false || isSharing);
+        case 'GARDEN_DOUBLE_SHARING':
+          return new GardenDoubleRoomCategory('GARDEN_DOUBLE', true || isSharing);
+        case 'GARDEN_SHARED':
+          return new GardenSharedRoomCategory('GARDEN_SHARED', false);
+        case 'GARDEN_SHARED_SHARING':
+          return new GardenSharedRoomCategory('GARDEN_SHARED', true || isSharing);
+        case 'GARDEN_SINGLE':
+          return new GardenSingleRoomCategory('GARDEN_SINGLE', false || isSharing);
+        case 'DORMITORY':
+          return new DormitoryRoomCategory('DORMITORY', false || isSharing);
+        case 'TENT_HUT':
+          return new TentHutRoomCategory('TENT_HUT', false || isSharing);
+        case 'TENT_SPACE':
+          return new TentSpaceRoomCategory('TENT_SPACE', false || isSharing);
+        case 'NULL_ROOM':
+          return new TentSpaceRoomCategory('NULL_ROOM', false || isSharing);
         default:
           throw new Error('Invalid roomId: "' + roomId + '"');
       }
@@ -843,7 +840,7 @@ var RoomStay = function () {
 // Room ID's allowed for a TTC stay
 
 
-var TTC_ROOM_IDS = [ROOM_ID.TENT_SPACE, ROOM_ID.TENT_HUT, ROOM_ID.DORMITORY];
+var TTC_ROOM_IDS = ['TENT_SPACE', 'TENT_HUT', 'DORMITORY'];
 
 // Dates of TTC, including the 1 free day
 var TTC_DATES = [{
@@ -909,13 +906,13 @@ var TTCStay = function (_RoomStay) {
     value: function getDailyRoomYVPRate() {
       var packagePrice = void 0;
       switch (this.roomCategory.id) {
-        case ROOM_ID.TENT_SPACE:
+        case 'TENT_SPACE':
           packagePrice = 2400;
           break;
-        case ROOM_ID.DORMITORY:
+        case 'DORMITORY':
           packagePrice = 3255;
           break;
-        case ROOM_ID.TENT_HUT:
+        case 'TENT_HUT':
           packagePrice = 3490;
           break;
       }
@@ -937,8 +934,8 @@ var StayFactory = function () {
   createClass(StayFactory, null, [{
     key: 'createStay',
     value: function createStay(stay, courses, reservation) {
-      if (stay.type === STAY.ROOM) return new RoomStay(stay, courses, reservation);
-      if (stay.type === STAY.TTC) return new TTCStay(stay, courses, reservation);
+      if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation);
+      if (stay.type === 'TTC') return new TTCStay(stay, courses, reservation);
       throw new Error('Invalid stay type: ' + stay.type);
     }
   }, {
@@ -1084,4 +1081,4 @@ var ReservationCalculator = function () {
   return ReservationCalculator;
 }();
 
-export { ReservationCalculator, RoomCategoryFactory, SeasonPriceFactory, StayFactory as RoomStayFactory, ROOM_ID, SEASON, DISCOUNT, STAY, moment, createMoment, formatMoment };
+export { ReservationCalculator, RoomCategoryFactory, SeasonPriceFactory, StayFactory as RoomStayFactory, moment, createMoment, formatMoment };

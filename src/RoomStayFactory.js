@@ -3,7 +3,6 @@ import { moment, createMoment } from './moment'
 import Discount from './Discount'
 import SeasonPriceFactory from './SeasonPriceFactory'
 import RoomCategoryFactory from './RoomCategoryFactory'
-import { ROOM_ID, STAY } from './constants'
 
 class RoomStay {
   constructor(stay, courses, reservation) {
@@ -62,9 +61,9 @@ class RoomStay {
 
 // Room ID's allowed for a TTC stay
 const TTC_ROOM_IDS = [
-  ROOM_ID.TENT_SPACE,
-  ROOM_ID.TENT_HUT,
-  ROOM_ID.DORMITORY
+  'TENT_SPACE',
+  'TENT_HUT',
+  'DORMITORY'
 ];
 
 // Dates of TTC, including the 1 free day
@@ -122,13 +121,13 @@ class TTCStay extends RoomStay {
   getDailyRoomYVPRate() {
     let packagePrice;
     switch (this.roomCategory.id) {
-      case ROOM_ID.TENT_SPACE:
+      case 'TENT_SPACE':
         packagePrice = 2400
         break
-      case ROOM_ID.DORMITORY:
+      case 'DORMITORY':
         packagePrice = 3255
         break
-      case ROOM_ID.TENT_HUT:
+      case 'TENT_HUT':
         packagePrice = 3490
         break
     }
@@ -142,8 +141,8 @@ class TTCStay extends RoomStay {
 
 export default class StayFactory{
   static createStay(stay, courses, reservation) {
-    if (stay.type === STAY.ROOM) return new RoomStay(stay, courses, reservation)
-    if (stay.type === STAY.TTC) return new TTCStay(stay, courses, reservation)
+    if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation)
+    if (stay.type === 'TTC') return new TTCStay(stay, courses, reservation)
     throw new Error(`Invalid stay type: ${stay.type}`)
   }
   static getTTCDates() {
