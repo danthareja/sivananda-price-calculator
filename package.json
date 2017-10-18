@@ -24,8 +24,7 @@
     "lodash.round": "^4.0.4",
     "lodash.sumby": "^4.6.0",
     "lodash.values": "^4.3.0",
-    "moment": "^2.19.1",
-    "moment-range": "^3.0.3"
+    "moment": "^2.19.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

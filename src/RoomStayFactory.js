@@ -1,5 +1,5 @@
+import moment from 'moment'
 import * as _ from './lodash'
-import { moment, createMoment } from './moment'
 import Discount from './Discount'
 import SeasonPriceFactory from './SeasonPriceFactory'
 import RoomCategoryFactory from './RoomCategoryFactory'
@@ -7,8 +7,8 @@ import ttc from './data/ttc'
 
 class RoomStay {
   constructor(stay, courses, reservation) {
-    this._checkInDate = stay.checkInDate
-    this._checkOutDate = stay.checkOutDate
+    this.checkInDate = moment(stay.checkInDate)
+    this.checkOutDate = moment(stay.checkOutDate)
 
     this.courses = courses
     this.reservation = reservation
@@ -20,21 +20,12 @@ class RoomStay {
     this.roomCategory = RoomCategoryFactory.createRoomCategory(stay.roomId, isSharing)
   }
 
-  checkInDate() {
-    return createMoment(this._checkInDate)
-  }
-
-  checkOutDate() {
-    return createMoment(this._checkOutDate)
-  }
-
   getDateRange() {
-    return Array.from(
-      moment.range(
-        this.checkInDate(),
-        this.checkOutDate().subtract(1, 'days') // checkOutDate is not paid for
-      ).by('days')
-    )
+    const dates = []
+    for (let m = moment(this.checkInDate); m.isBefore(this.checkOutDate); m.add(1, 'days')) {
+      dates.push(m.clone())
+    }
+    return dates;
   }
 
   getRoomRate(date) {
@@ -66,7 +57,7 @@ class TTCStay extends RoomStay {
       throw new Error(`No TTC price for room "${this.roomCategory.id}"`)
     }
     return [{
-      date: this.checkInDate(),
+      date: this.checkInDate.clone(),
       room: ttc.prices[this.roomCategory.id],
       yvp: 0
     }]

@@ -1,5 +1,5 @@
+import moment from 'moment'
 import * as _ from './lodash'
-import { createMoment } from './moment'
 import RoomStayFactory from './RoomStayFactory'
 import Course from './Course'
 
@@ -9,7 +9,7 @@ export default class ReservationCalculator {
       adults: adults,
       children: children,
       nights: _.sumBy(stays, stay => {
-        return createMoment(stay.checkOutDate).diff(createMoment(stay.checkInDate), 'days')
+        return moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days')
       })
     }
     this.courses = courses.map(course => new Course(course))

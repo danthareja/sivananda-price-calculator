@@ -1,20 +1,19 @@
+const moment = require('moment')
 const { expect } = require('chai');
 const each = require('lodash.foreach')
 
-const {
-  ReservationCalculator,
-  createMoment,
-  formatMoment
-} = require('..');
+const { ReservationCalculator } = require('..');
+
+const formatMoment = (m) => m.format('YYYY-MM-DD');
 
 const dates = {
-  SUMMER_2015: createMoment('2015-06-01'),
-  WINTER_2016: createMoment('2015-11-01'),
-  SUMMER_2016: createMoment('2016-04-01'),
-  WINTER_2017: createMoment('2016-11-01'),
-  SUMMER_2017: createMoment('2017-07-01'),
-  WINTER_2018: createMoment('2017-11-01'),
-  SUMMER_2018: createMoment('2018-07-01'),
+  SUMMER_2015: moment('2015-06-01'),
+  WINTER_2016: moment('2015-11-01'),
+  SUMMER_2016: moment('2016-04-01'),
+  WINTER_2017: moment('2016-11-01'),
+  SUMMER_2017: moment('2017-07-01'),
+  WINTER_2018: moment('2017-11-01'),
+  SUMMER_2018: moment('2018-07-01'),
 };
 
 describe('base rates (1 adult)', function() {

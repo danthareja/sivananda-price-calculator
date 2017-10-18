@@ -4,33 +4,14 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var moment = _interopDefault(require('moment'));
 var _$1 = _interopDefault(require('lodash.assign'));
 var _$2 = _interopDefault(require('lodash.flatmap'));
 var _$3 = _interopDefault(require('lodash.round'));
 var _$4 = _interopDefault(require('lodash.sumby'));
 var _$5 = _interopDefault(require('lodash.values'));
-var Moment = _interopDefault(require('moment'));
 
 // Import only used functions from lodash to keep bundle size down
-
-// A common module to consistently import the extended version of 'moment'
-// Importing moment-range as a commonjs module avoids the rollup error
-// Error: 'extendMoment' is not exported by node_modules/moment-range/dist/moment-range.js
-
-var _require = require('moment-range');
-var extendMoment = _require.extendMoment;
-
-var format = 'YYYY-MM-DD';
-
-var moment = extendMoment(Moment);
-
-var createMoment = function createMoment(date) {
-  return moment(date, format);
-};
-
-var formatMoment = function formatMoment(moment) {
-  return moment.format(format);
-};
 
 var asyncGenerator = function () {
   function AwaitValue(value) {
@@ -399,6 +380,11 @@ var seasons = [{
   }
 }];
 
+// const seasons = seasonData.map(season => _.assign(season, {
+//   startDate: createMoment(season.startDate),
+//   endDate: createMoment(season.endDate)
+// }))
+
 var SeasonPrice = function () {
   function SeasonPrice(season) {
     classCallCheck(this, SeasonPrice);
@@ -480,10 +466,11 @@ var SeasonPriceFactory = function () {
   createClass(SeasonPriceFactory, null, [{
     key: 'getSeasonFromDate',
     value: function getSeasonFromDate(date) {
-      return seasons.find(function (_ref) {
-        var startDate = _ref.startDate,
-            endDate = _ref.endDate;
-        return date.within(moment.range(createMoment(startDate), createMoment(endDate)));
+      if (!moment.isMoment(date)) {
+        date = moment(date);
+      }
+      return seasons.find(function (season) {
+        return date.isBetween(season.startDate, season.endDate, 'days', '[]');
       });
     }
   }, {
@@ -888,8 +875,8 @@ var RoomStay = function () {
   function RoomStay(stay, courses, reservation) {
     classCallCheck(this, RoomStay);
 
-    this._checkInDate = stay.checkInDate;
-    this._checkOutDate = stay.checkOutDate;
+    this.checkInDate = moment(stay.checkInDate);
+    this.checkOutDate = moment(stay.checkOutDate);
 
     this.courses = courses;
     this.reservation = reservation;
@@ -902,20 +889,13 @@ var RoomStay = function () {
   }
 
   createClass(RoomStay, [{
-    key: 'checkInDate',
-    value: function checkInDate() {
-      return createMoment(this._checkInDate);
-    }
-  }, {
-    key: 'checkOutDate',
-    value: function checkOutDate() {
-      return createMoment(this._checkOutDate);
-    }
-  }, {
     key: 'getDateRange',
     value: function getDateRange() {
-      return Array.from(moment.range(this.checkInDate(), this.checkOutDate().subtract(1, 'days') // checkOutDate is not paid for
-      ).by('days'));
+      var dates = [];
+      for (var m = moment(this.checkInDate); m.isBefore(this.checkOutDate); m.add(1, 'days')) {
+        dates.push(m.clone());
+      }
+      return dates;
     }
   }, {
     key: 'getRoomRate',
@@ -967,7 +947,7 @@ var TTCStay = function (_RoomStay) {
         throw new Error('No TTC price for room "' + this.roomCategory.id + '"');
       }
       return [{
-        date: this.checkInDate(),
+        date: this.checkInDate.clone(),
         room: ttc.prices[this.roomCategory.id],
         yvp: 0
       }];
@@ -1009,29 +989,17 @@ var Course = function () {
         discount = _ref.discount;
     classCallCheck(this, Course);
 
-    this._startDate = startDate;
-    this._endDate = endDate;
+    this.startDate = moment(startDate);
+    this.endDate = moment(endDate);
     this.tuition = tuition;
     this.discount = new Discount(discount || {});
   }
 
   createClass(Course, [{
-    key: 'startDate',
-    value: function startDate() {
-      return createMoment(this._startDate);
-    }
-  }, {
-    key: 'endDate',
-    value: function endDate() {
-      return createMoment(this._endDate);
-    }
-
-    // YVP is not included duing the duration of the course and one night before
-
-  }, {
     key: 'doesYVPApply',
     value: function doesYVPApply(date) {
-      return date.within(moment.range(this.startDate().subtract(1, 'days'), this.endDate()));
+      // YVP is not included duing the duration of the course and one night before
+      return date.isBetween(this.startDate.clone().subtract(1, 'days'), this.endDate, null, []);
     }
   }, {
     key: 'totalCost',
@@ -1060,7 +1028,7 @@ var ReservationCalculator = function () {
       adults: adults,
       children: children,
       nights: _$4(stays, function (stay) {
-        return createMoment(stay.checkOutDate).diff(createMoment(stay.checkInDate), 'days');
+        return moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days');
       })
     };
     this.courses = courses.map(function (course) {
@@ -1135,6 +1103,3 @@ exports.ReservationCalculator = ReservationCalculator;
 exports.RoomCategoryFactory = RoomCategoryFactory;
 exports.SeasonPriceFactory = SeasonPriceFactory;
 exports.RoomStayFactory = StayFactory;
-exports.moment = moment;
-exports.createMoment = createMoment;
-exports.formatMoment = formatMoment;
