@@ -5,7 +5,7 @@ import pkg from './package.json'
 
 export default [
   {
-    name: 'Sivananda',
+    name: 'SivanandaPriceCalculator',
     input: 'src/index.js',
     output: {
       file: pkg.browser,

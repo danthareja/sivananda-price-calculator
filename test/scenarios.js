@@ -2,7 +2,7 @@ const moment = require('moment')
 const { expect } = require('chai');
 const each = require('lodash.foreach')
 
-const { ReservationCalculator } = require('..');
+const SivanandaPriceCalculator = require('..');
 
 const formatMoment = (m) => m.format('YYYY-MM-DD');
 
@@ -18,7 +18,7 @@ const dates = {
 
 describe('scenarios', function() {
   it('one adult staying 3 nights in a ocean view deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -34,7 +34,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 3 nights in a ocean view deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -50,7 +50,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights in a garden room single during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -66,7 +66,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights in a garden room single during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -82,7 +82,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 8 nights in a garden room double bed during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -98,7 +98,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 8 nights in a garden room double bed during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -114,7 +114,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 12 nights in beachfront deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -130,7 +130,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 12 nights in beachfront deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -146,7 +146,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 3 nights in a dormitory during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -161,7 +161,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying offsite for 3 nights during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -176,7 +176,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying offsite for 3 nights during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -191,7 +191,7 @@ describe('scenarios', function() {
   })
 
   it('two adults staying 5 nights in a beachfront deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       stays: [{
         type: 'ROOM',
@@ -207,7 +207,7 @@ describe('scenarios', function() {
   })
 
   it('two adults staying 5 nights in a beachfront deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       stays: [{
         type: 'ROOM',
@@ -223,7 +223,7 @@ describe('scenarios', function() {
   })
 
   it('two adults staying 15 nights in a garden room double bed during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       stays: [{
         type: 'ROOM',
@@ -239,7 +239,7 @@ describe('scenarios', function() {
   })
 
   it('two adults staying 15 nights in a garden room double bed during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       stays: [{
         type: 'ROOM',
@@ -255,7 +255,7 @@ describe('scenarios', function() {
   })
 
   it('two adults staying 5 nights in a tent hut double during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       stays: [{
         type: 'ROOM',
@@ -271,7 +271,7 @@ describe('scenarios', function() {
   })
 
   it('four adults staying 5 nights in a dormitory during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 4,
       stays: [{
         type: 'ROOM',
@@ -289,7 +289,7 @@ describe('scenarios', function() {
   it('one adult and one child staying in a beachfront deluxe for three nights duing Winter 2017', function() {
     // Beachfront deluxe has a requirement of 2 adults minimum.
     // In this scenario, the child counts as an adult
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       children: 1,
       stays: [{
@@ -307,7 +307,7 @@ describe('scenarios', function() {
 
   it('one adult and two children staying in a beachfront deluxe for three nights duing Winter 2017', function() {
     // Uncertain about this price. Assume 2 adults + 1 child for now
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       children: 2,
       stays: [{
@@ -325,7 +325,7 @@ describe('scenarios', function() {
 
   it('two adults and one child staying in a beachfront deluxe for three nights duing Winter 2017', function() {
     // Once the 2 adult minimum is hit, each child counts as 0.5 adults, like normal
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       children: 1,
       stays: [{
@@ -343,7 +343,7 @@ describe('scenarios', function() {
 
   it('two adults and two children staying in a beachfront deluxe for three nights duing Winter 2017', function() {
     // Once the 2 adult minimum is hit, each child counts as 0.5 adults, like normal
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       children: 2,
       stays: [{
@@ -363,7 +363,7 @@ describe('scenarios', function() {
   it('one adult and one child staying in a oceanview room for three nights duing Winter 2017', function() {
     // Beachfront deluxe has a requirement of 2 adults minimum.
     // In this scenario, the child counts as an adult
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       children: 1,
       stays: [{
@@ -381,7 +381,7 @@ describe('scenarios', function() {
 
   it('one adult and two children staying in a oceanview room for three nights duing Winter 2017', function() {
     // Uncertain about this price. Assume 2 adults + 1 child for now
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       children: 2,
       stays: [{
@@ -399,7 +399,7 @@ describe('scenarios', function() {
 
   it('two adults and one child staying in a oceanview room for three nights duing Winter 2017', function() {
     // Once the 2 adult minimum is hit, each child counts as 0.5 adults, like normal
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       children: 1,
       stays: [{
@@ -417,7 +417,7 @@ describe('scenarios', function() {
 
   it('two adults and two children staying in a oceanview room for three nights duing Winter 2017', function() {
     // Once the 2 adult minimum is hit, each child counts as 0.5 adults, like normal
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       children: 2,
       stays: [{
@@ -436,7 +436,7 @@ describe('scenarios', function() {
   it('one adult and one child staying in a beach hut for three nights duing Winter 2017', function() {
     // Beachfront deluxe has a requirement of 2 adults minimum.
     // In this scenario, the child counts as an adult
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       children: 1,
       stays: [{
@@ -454,7 +454,7 @@ describe('scenarios', function() {
 
   it('one adult and two children staying in a beach hut for three nights duing Winter 2017', function() {
     // Uncertain about this price. Assume 2 adults + 1 child for now
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       children: 2,
       stays: [{
@@ -471,7 +471,7 @@ describe('scenarios', function() {
   })
 
   it('two adults and one child staying in a beach hut for three nights duing Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       children: 1,
       stays: [{
@@ -488,7 +488,7 @@ describe('scenarios', function() {
   })
 
   it('two adults and two children staying in a beach hut for three nights duing Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 2,
       children: 2,
       stays: [{
@@ -505,7 +505,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 10 nights in a beachfront deluxe, registered for a course from day 3-7 that has a tuition of $250 during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -527,7 +527,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 10 nights in a beachfront deluxe, registered for a course from day 3-7 that has a tuition of $250 during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -553,7 +553,7 @@ describe('scenarios', function() {
   // They are sharing a garden room with bath and staying at the ashram for a total of 7 nights.
   // The workshop is a course that is $295 and 3 days long. No prob ladies!
   it('two adults staying 7 nights sharing a garden room bath taking a 3 day course for $295 starting the day of their arrival during Winter 2017. The system\'s input for this case is individual calculations.', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -572,7 +572,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 12 nights sharing a beachfront deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -587,7 +587,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 12 nights sharing a beachfront deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -603,7 +603,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 2 nights alone in a garden room double bed and 3 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -624,7 +624,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 2 nights alone in a garden room double bed and 3 nights alone in a oceanview deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -645,7 +645,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights alone in a garden room double bed and 5 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -666,7 +666,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights alone in a garden room double bed and 5 nights alone in a oceanview deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -687,7 +687,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights sharing a garden room shared and 5 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -708,7 +708,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights sharing a garden room shared and 5 nights alone in a oceanview deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -729,7 +729,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 2 nights alone in a garden room double bed and 3 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -750,7 +750,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 2 nights alone in a garden room double bed and 3 nights alone in a oceanview deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -771,7 +771,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights alone in a garden room double bed and 5 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -792,7 +792,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights alone in a garden room double bed and 5 nights alone in a oceanview deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -813,7 +813,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights sharing a garden room shared and 5 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -834,7 +834,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 4 nights sharing a garden room shared and 5 nights alone in a oceanview deluxe during Summer 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -855,7 +855,7 @@ describe('scenarios', function() {
   })
 
   it('one adult staying 2 nights alone in a garden room double bed and 3 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -884,7 +884,7 @@ describe('scenarios', function() {
   // This graduate is taking Brahmaswaroop's "Dual path of yoga practice and Code writing" yoga course, which is 295 and 5 days long.
   // What will their folio balance be?!
   it('A TTC graduate staying 14 nights sharing a beach hut taking a 4 day course for $295 during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -913,7 +913,7 @@ describe('scenarios', function() {
   // Each course is $295 each and the first one is 3 days while the second is 4 days.
   // Can this economic guru trade her briefcase for some mala beads?
   it('one adult staying in a beachfront deluxe for 10 nights, taking a 3 day course for $295 and a 4 day course for $295 during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -948,7 +948,7 @@ describe('scenarios', function() {
   // All of which he was registered for before he arrived and paid in full upon arrival.
   // Essentials 1 is 3 days and $195, Essentials 2 is 4 days and $295, then Essentials 3 is $400 and 6 days.
   it('one adult staying in a tent for 25 nights taking a 3 day course for $195, a 4 day course for $295, and a 6 day course for $400 during Winter 2017', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',
@@ -987,7 +987,7 @@ describe('scenarios', function() {
   })
 
   it('one adult comes for April 2017 TTC in a Tent Space', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'TTC',
@@ -1001,7 +1001,7 @@ describe('scenarios', function() {
   })
 
   it('one adult comes for April 2017 TTC in a Dormitory', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'TTC',
@@ -1015,7 +1015,7 @@ describe('scenarios', function() {
   })
 
   it('one adult comes for April 2017 TTC in a Tent Hut', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'TTC',
@@ -1034,7 +1034,7 @@ describe('scenarios', function() {
   // and feel it is their duty to become a teacher to share this energy with others (WOW 😮)!!
   // They would like to join the April 2017 TTC. How much will their total be?
   it('one adult staying in a tent hut from March 26th, 2017 to April 3rd, 2017 and taking April TTC', function() {
-    const calculator = new ReservationCalculator({
+    const calculator = new SivanandaPriceCalculator({
       adults: 1,
       stays: [{
         type: 'ROOM',

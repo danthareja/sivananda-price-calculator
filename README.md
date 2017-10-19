@@ -4,10 +4,10 @@ A reservation price calculator for Sivananda Ashram Yoga Retreat
 ## Example
 
 ```js
-import { ReservationCalculator } from 'sivananda-price-calculator'
+import SivanandaPriceCalculator from 'sivananda-price-calculator'
 
 // One adult staying 3 nights in an Ocean View Deluxe during the Winter 2017 season
-const calculator = new ReservationCalculator({
+const calculator = new SivanandaPriceCalculator({
   adults: 1,
   stays: [{
     type: 'ROOM',
@@ -32,4 +32,4 @@ yarn add danthareja/sivananda-price-calculator
 
 ## Usage
 
-Coming soon. In the mean time, check out `test/ReservationCalculator.js` for more examples.
+Coming soon. In the mean time, check out `test/scenarios.js` for more examples.

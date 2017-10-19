@@ -104,10 +104,6 @@ class TentHutRoomCategory extends AbstractSingleBedRoomCategory {}
 class TentSpaceRoomCategory extends AbstractSingleBedRoomCategory {}
 
 export default class RoomCategoryFactory {
-  static getRooms() {
-    return rooms
-  }
-
   static createRoomCategory(roomId, reservation) {
     switch (roomId) {
       case 'BEACHFRONT': return new BeachFrontRoomCategory('BEACHFRONT', false, reservation)

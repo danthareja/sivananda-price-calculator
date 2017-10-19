@@ -2,7 +2,7 @@ const moment = require('moment')
 const { expect } = require('chai');
 const each = require('lodash.foreach')
 
-const { ReservationCalculator } = require('..');
+const SivanandaPriceCalculator = require('..');
 
 const formatMoment = (m) => m.format('YYYY-MM-DD');
 
@@ -123,7 +123,7 @@ describe('base rates', function() {
     each(rates, (rate, season) => {
       each(nights, (nights, index) => {
         it(`${roomId.toUpperCase()}, ${season.toUpperCase()}, ${nights} night(s)`, () => {
-          const calculator = new ReservationCalculator({
+          const calculator = new SivanandaPriceCalculator({
             adults: 1,
             stays: [{
               type: 'ROOM',

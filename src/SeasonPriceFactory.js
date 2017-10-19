@@ -39,21 +39,14 @@ class SummerSeasonPrice extends SeasonPrice {
 }
 
 export default class SeasonPriceFactory {
-  static getSeasons() {
-    return seasons
-  }
-
-  static getSeasonFromDate(date) {
+  static createSeasonPrice(date) {
     if (!moment.isMoment(date)) {
       date = moment(date)
     }
-    return SeasonPriceFactory.getSeasons().find(season => {
+
+    const season = seasons.find(season => {
       return date.isBetween(season.startDate, season.endDate, 'days', '[]')
     })
-  };
-
-  static createSeasonPrice(date) {
-    const season = SeasonPriceFactory.getSeasonFromDate(date)
 
     if (!season) {
       throw new Error(`Could not find season for date: ${date.format('YYYY-MM-DD')}`)

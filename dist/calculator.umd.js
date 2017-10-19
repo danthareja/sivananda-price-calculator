@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.Sivananda = {})));
-}(this, (function (exports) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.SivanandaPriceCalculator = factory());
+}(this, (function () { 'use strict';
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -8066,24 +8066,15 @@ var SeasonPriceFactory = function () {
   }
 
   createClass(SeasonPriceFactory, null, [{
-    key: 'getSeasons',
-    value: function getSeasons() {
-      return seasons;
-    }
-  }, {
-    key: 'getSeasonFromDate',
-    value: function getSeasonFromDate(date) {
+    key: 'createSeasonPrice',
+    value: function createSeasonPrice(date) {
       if (!moment.isMoment(date)) {
         date = moment(date);
       }
-      return SeasonPriceFactory.getSeasons().find(function (season) {
+
+      var season = seasons.find(function (season) {
         return date.isBetween(season.startDate, season.endDate, 'days', '[]');
       });
-    }
-  }, {
-    key: 'createSeasonPrice',
-    value: function createSeasonPrice(date) {
-      var season = SeasonPriceFactory.getSeasonFromDate(date);
 
       if (!season) {
         throw new Error('Could not find season for date: ' + date.format('YYYY-MM-DD'));
@@ -8414,11 +8405,6 @@ var RoomCategoryFactory = function () {
   }
 
   createClass(RoomCategoryFactory, null, [{
-    key: 'getRooms',
-    value: function getRooms() {
-      return rooms;
-    }
-  }, {
     key: 'createRoomCategory',
     value: function createRoomCategory(roomId, reservation) {
       switch (roomId) {
@@ -8613,11 +8599,6 @@ var StayFactory = function () {
   }
 
   createClass(StayFactory, null, [{
-    key: 'getTTCData',
-    value: function getTTCData() {
-      return ttc;
-    }
-  }, {
     key: 'createStay',
     value: function createStay(stay, courses, reservation) {
       if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation);
@@ -8658,8 +8639,25 @@ var Course = function () {
   return Course;
 }();
 
-var ReservationCalculator = function () {
-  function ReservationCalculator(_ref) {
+var SivanandaPriceCalculator$1 = function () {
+  createClass(SivanandaPriceCalculator, null, [{
+    key: 'getRooms',
+    value: function getRooms() {
+      return rooms.slice();
+    }
+  }, {
+    key: 'getSeasons',
+    value: function getSeasons() {
+      return seasons.slice();
+    }
+  }, {
+    key: 'getTTC',
+    value: function getTTC() {
+      return Object.assign({}, ttc);
+    }
+  }]);
+
+  function SivanandaPriceCalculator(_ref) {
     var _this = this;
 
     var _ref$adults = _ref.adults,
@@ -8670,7 +8668,7 @@ var ReservationCalculator = function () {
         stays = _ref$stays === undefined ? [] : _ref$stays,
         _ref$courses = _ref.courses,
         courses = _ref$courses === undefined ? [] : _ref$courses;
-    classCallCheck(this, ReservationCalculator);
+    classCallCheck(this, SivanandaPriceCalculator);
 
     this.reservation = {
       adults: adults,
@@ -8687,7 +8685,7 @@ var ReservationCalculator = function () {
     });
   }
 
-  createClass(ReservationCalculator, [{
+  createClass(SivanandaPriceCalculator, [{
     key: 'getDailyRoomYVP',
     value: function getDailyRoomYVP() {
       // Because stays could be overlapping, we should merge room rate objects together
@@ -8744,14 +8742,9 @@ var ReservationCalculator = function () {
       return this.getSubtotal();
     }
   }]);
-  return ReservationCalculator;
+  return SivanandaPriceCalculator;
 }();
 
-exports.ReservationCalculator = ReservationCalculator;
-exports.RoomCategoryFactory = RoomCategoryFactory;
-exports.SeasonPriceFactory = SeasonPriceFactory;
-exports.RoomStayFactory = StayFactory;
-
-Object.defineProperty(exports, '__esModule', { value: true });
+return SivanandaPriceCalculator$1;
 
 })));

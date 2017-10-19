@@ -65,10 +65,6 @@ class TTCStay extends RoomStay {
 }
 
 export default class StayFactory {
-  static getTTCData() {
-    return ttc;
-  }
-
   static createStay(stay, courses, reservation) {
     if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation)
     if (stay.type === 'TTC') return new TTCStay(stay, courses, reservation)

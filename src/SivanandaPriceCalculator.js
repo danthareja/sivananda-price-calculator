@@ -2,8 +2,23 @@ import moment from 'moment'
 import * as _ from './lodash'
 import RoomStayFactory from './RoomStayFactory'
 import Course from './Course'
+import rooms from './data/rooms'
+import seasons from './data/seasons'
+import ttc from './data/ttc'
 
-export default class ReservationCalculator {
+export default class SivanandaPriceCalculator {
+  static getRooms() {
+    return rooms.slice()
+  }
+
+  static getSeasons() {
+    return seasons.slice()
+  }
+
+  static getTTC() {
+    return Object.assign({}, ttc)
+  }
+
   constructor({ adults = 0, children = 0, stays = [], courses = [] }) {
     this.reservation = {
       adults: adults,
