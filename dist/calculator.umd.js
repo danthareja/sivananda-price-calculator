@@ -7744,7 +7744,30 @@ var createClass = function () {
 
 
 
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
 
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -8154,7 +8177,7 @@ var AbstractRoomCategory = function () {
     classCallCheck(this, AbstractRoomCategory);
 
     this.id = id;
-    this.reservation = reservation;
+    this.reservation = Object.assign({}, reservation);
     this.isSharing = isWillingToShare || reservation.adults + reservation.children > 1;
   }
 
@@ -8169,24 +8192,29 @@ var AbstractRoomCategory = function () {
       return seasonPrice.getSingleInDoubleOccupancyRoomDiscount();
     }
   }, {
-    key: 'getRoomRate',
-    value: function getRoomRate(date) {
+    key: 'getBaseRateMultiplier',
+    value: function getBaseRateMultiplier() {
+      return this.reservation.adults + this.reservation.children / 2;
+    }
+  }, {
+    key: 'getBaseRate',
+    value: function getBaseRate(date) {
       var seasonPrice = SeasonPriceFactory.createSeasonPrice(date);
       var roomCategory = this.isSharing ? this.getRoomCategoryForShared() : this;
 
-      var baseRate = void 0;
-
       if (this.isSharing) {
-        baseRate = seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights);
+        return seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights);
       } else {
-        baseRate = seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights) * this.bedCount() * (100 - this.getSingleInDoubleOccupancyRoomDiscount(seasonPrice)) / 100;
+        return seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights) * this.bedCount() * (100 - this.getSingleInDoubleOccupancyRoomDiscount(seasonPrice)) / 100;
       }
-
-      return baseRate * (this.reservation.adults + this.reservation.children / 2);
+    }
+  }, {
+    key: 'getRate',
+    value: function getRate(date) {
+      return this.getBaseRate(date) * this.getBaseRateMultiplier();
     }
 
-    // in some room categories such as GardenDoubleRoomCategory the price is taken from another room category,
-    // namely: GardenSharedRoomCategory, when the room is shared.
+    // In some room categories the price is taken from another room category when the room is shared
 
   }, {
     key: 'getRoomCategoryForShared',
@@ -8206,16 +8234,17 @@ var AbstractSingleBedRoomCategory = function (_AbstractRoomCategory) {
   }
 
   createClass(AbstractSingleBedRoomCategory, [{
-    key: 'getSingleInDoubleOccupancyRoomDiscount',
-
-    // This is not a double occupancy room. Single occupancy discount never applies here.
-    value: function getSingleInDoubleOccupancyRoomDiscount(seasonPrice) {
-      return 0;
-    }
-  }, {
     key: 'bedCount',
     value: function bedCount() {
       return 1;
+    }
+
+    // This is not a double occupancy room, single occupancy discount never applies here.
+
+  }, {
+    key: 'getSingleInDoubleOccupancyRoomDiscount',
+    value: function getSingleInDoubleOccupancyRoomDiscount(seasonPrice) {
+      return 0;
     }
   }]);
   return AbstractSingleBedRoomCategory;
@@ -8229,6 +8258,27 @@ var BeachFrontRoomCategory = function (_AbstractRoomCategory2) {
     return possibleConstructorReturn(this, (BeachFrontRoomCategory.__proto__ || Object.getPrototypeOf(BeachFrontRoomCategory)).apply(this, arguments));
   }
 
+  createClass(BeachFrontRoomCategory, [{
+    key: 'getBaseRateMultiplier',
+
+    // Beach front rooms have a two adult minimum
+    // Until there are two adults, children count as adults
+    value: function getBaseRateMultiplier() {
+      if (!this.isSharing) {
+        return get(BeachFrontRoomCategory.prototype.__proto__ || Object.getPrototypeOf(BeachFrontRoomCategory.prototype), 'getBaseRateMultiplier', this).call(this);
+      }
+
+      var adults = this.reservation.adults;
+      var children = this.reservation.children;
+
+      if (adults === 1 && children > 0) {
+        adults += 1;
+        children -= 1;
+      }
+
+      return adults + children / 2;
+    }
+  }]);
   return BeachFrontRoomCategory;
 }(AbstractRoomCategory);
 
@@ -8240,6 +8290,27 @@ var OceanViewRoomCategory = function (_AbstractRoomCategory3) {
     return possibleConstructorReturn(this, (OceanViewRoomCategory.__proto__ || Object.getPrototypeOf(OceanViewRoomCategory)).apply(this, arguments));
   }
 
+  createClass(OceanViewRoomCategory, [{
+    key: 'getBaseRateMultiplier',
+
+    // Ocean view rooms have a two adult minimum
+    // Until there are two adults, children count as adults
+    value: function getBaseRateMultiplier() {
+      if (!this.isSharing) {
+        return get(OceanViewRoomCategory.prototype.__proto__ || Object.getPrototypeOf(OceanViewRoomCategory.prototype), 'getBaseRateMultiplier', this).call(this);
+      }
+
+      var adults = this.reservation.adults;
+      var children = this.reservation.children;
+
+      if (adults === 1 && children > 0) {
+        adults += 1;
+        children -= 1;
+      }
+
+      return adults + children / 2;
+    }
+  }]);
   return OceanViewRoomCategory;
 }(AbstractRoomCategory);
 
@@ -8461,8 +8532,8 @@ var RoomStay = function () {
     this.courses = courses;
     this.reservation = reservation;
 
-    this.roomDiscount = new Discount(stay.roomDiscount || {});
-    this.yvpDiscount = new Discount(stay.yvpDiscount || {});
+    this.roomDiscount = new Discount(stay.roomDiscount);
+    this.yvpDiscount = new Discount(stay.yvpDiscount);
 
     this.roomCategory = RoomCategoryFactory.createRoomCategory(stay.roomId, reservation);
   }
@@ -8479,7 +8550,7 @@ var RoomStay = function () {
   }, {
     key: 'getRoomRate',
     value: function getRoomRate(date) {
-      return this.roomCategory.getRoomRate(date);
+      return this.roomCategory.getRate(date);
     }
   }, {
     key: 'getYVPRate',
@@ -8492,6 +8563,7 @@ var RoomStay = function () {
         return 0;
       }
 
+      // YVP only applies to adults
       return SeasonPriceFactory.createSeasonPrice(date).getYVPRate() * this.reservation.adults;
     }
   }, {
@@ -8561,13 +8633,14 @@ var Course = function () {
     var startDate = _ref.startDate,
         endDate = _ref.endDate,
         tuition = _ref.tuition,
-        discount = _ref.discount;
+        _ref$discount = _ref.discount,
+        discount = _ref$discount === undefined ? {} : _ref$discount;
     classCallCheck(this, Course);
 
     this.startDate = moment(startDate);
     this.endDate = moment(endDate);
     this.tuition = tuition;
-    this.discount = new Discount(discount || {});
+    this.discount = new Discount(discount);
   }
 
   createClass(Course, [{

@@ -28,7 +28,7 @@ class RoomStay {
   }
 
   getRoomRate(date) {
-    return this.roomCategory.getRoomRate(date)
+    return this.roomCategory.getRate(date)
   }
 
   getYVPRate(date) {

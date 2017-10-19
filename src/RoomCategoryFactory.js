@@ -4,7 +4,7 @@ import rooms from './data/rooms'
 class AbstractRoomCategory {
   constructor(id, isWillingToShare, reservation) {
     this.id = id
-    this.reservation = reservation
+    this.reservation = Object.assign({}, reservation)
     this.isSharing = isWillingToShare || reservation.adults + reservation.children > 1
   }
 
@@ -16,41 +16,80 @@ class AbstractRoomCategory {
     return seasonPrice.getSingleInDoubleOccupancyRoomDiscount()
   }
 
-  getRoomRate(date){
+  getBaseRateMultiplier() {
+    return this.reservation.adults + ( this.reservation.children / 2 )
+  }
+
+  getBaseRate(date) {
     const seasonPrice = SeasonPriceFactory.createSeasonPrice(date)
     const roomCategory = this.isSharing ? this.getRoomCategoryForShared() : this
     
-    let baseRate;
-
     if (this.isSharing) {
-      baseRate = seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights)
+      return seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights)
     } else {
-      baseRate = seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights) * this.bedCount() * (100 - this.getSingleInDoubleOccupancyRoomDiscount(seasonPrice)) / 100
+      return seasonPrice.getRoomBaseRate(roomCategory.id, this.reservation.nights) * this.bedCount() * (100 - this.getSingleInDoubleOccupancyRoomDiscount(seasonPrice)) / 100
     }
+  }
 
-    return baseRate * (this.reservation.adults + this.reservation.children / 2)
+  getRate(date){
+    return this.getBaseRate(date) * this.getBaseRateMultiplier()
   }
   
-  // in some room categories such as GardenDoubleRoomCategory the price is taken from another room category,
-  // namely: GardenSharedRoomCategory, when the room is shared.
+  // In some room categories the price is taken from another room category when the room is shared
   getRoomCategoryForShared() {
     return this 
   }
 }
 
 class AbstractSingleBedRoomCategory extends AbstractRoomCategory {
-  // This is not a double occupancy room. Single occupancy discount never applies here.
-  getSingleInDoubleOccupancyRoomDiscount(seasonPrice) {
-    return 0
-  }
-
   bedCount() {
     return 1
   }
+
+  // This is not a double occupancy room, single occupancy discount never applies here.
+  getSingleInDoubleOccupancyRoomDiscount(seasonPrice) {
+    return 0
+  }
 }
 
-class BeachFrontRoomCategory extends AbstractRoomCategory {}
-class OceanViewRoomCategory extends AbstractRoomCategory {}
+class BeachFrontRoomCategory extends AbstractRoomCategory {
+  // Beach front rooms have a two adult minimum
+  // Until there are two adults, children count as adults
+  getBaseRateMultiplier() {
+    if (!this.isSharing) {
+      return super.getBaseRateMultiplier()
+    }
+
+    let adults = this.reservation.adults
+    let children = this.reservation.children
+
+    if (adults === 1 && children > 0) {
+      adults += 1
+      children -= 1
+    }
+
+    return adults + ( children / 2 )
+  }
+}
+class OceanViewRoomCategory extends AbstractRoomCategory {
+  // Ocean view rooms have a two adult minimum
+  // Until there are two adults, children count as adults
+  getBaseRateMultiplier() {
+    if (!this.isSharing) {
+      return super.getBaseRateMultiplier()
+    }
+
+    let adults = this.reservation.adults
+    let children = this.reservation.children
+
+    if (adults === 1 && children > 0) {
+      adults += 1
+      children -= 1
+    }
+
+    return adults + ( children / 2 )
+  }
+}
 class BeachHutRoomCategory extends AbstractRoomCategory {}
 class GardenBathRoomCategory extends AbstractRoomCategory {}
 class GardenDoubleRoomCategory extends AbstractSingleBedRoomCategory {
