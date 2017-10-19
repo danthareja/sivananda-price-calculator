@@ -8585,7 +8585,7 @@ var TTCStay = function (_RoomStay) {
       }
       return [{
         date: this.checkInDate.clone(),
-        room: ttc.prices[this.roomCategory.id],
+        room: this.roomDiscount.applyTo(ttc.prices[this.roomCategory.id]),
         yvp: 0
       }];
     }

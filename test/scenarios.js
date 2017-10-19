@@ -1028,6 +1028,116 @@ describe('scenarios', function() {
     expect(calculator.getTotalNumberOfNights()).to.equal(30)
   })
 
+  it('one adult comes for April 2017 TTC in a Tent Space with a 10% discount', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'TENT_SPACE',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03',
+        roomDiscount: {
+          type: 'PERCENT',
+          value: 10
+        }
+      }]
+    })
+    expect(calculator.getGrandTotal()).to.equal(2400 * 0.9)
+    expect(calculator.getTotalNumberOfNights()).to.equal(30)
+  })
+
+  it('one adult comes for April 2017 TTC in a Dormitory with a 10% discount', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'DORMITORY',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03',
+        roomDiscount: {
+          type: 'PERCENT',
+          value: 10
+        }
+      }]
+    })
+    expect(calculator.getGrandTotal()).to.equal(3255 * 0.9)
+    expect(calculator.getTotalNumberOfNights()).to.equal(30)
+  })
+
+  it('one adult comes for April 2017 TTC in a Tent Hut with a 10% discount ', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'TENT_HUT',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03',
+        roomDiscount: {
+          type: 'PERCENT',
+          value: 10
+        }
+      }]
+    })
+    expect(calculator.getGrandTotal()).to.equal(3490 * 0.9)
+    expect(calculator.getTotalNumberOfNights()).to.equal(30)
+  })
+
+
+  it('one adult comes for April 2017 TTC in a Tent Space with a $500 discount', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'TENT_SPACE',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03',
+        roomDiscount: {
+          type: 'FIXED',
+          value: 500
+        }
+      }]
+    })
+    expect(calculator.getGrandTotal()).to.equal(2400 - 500)
+    expect(calculator.getTotalNumberOfNights()).to.equal(30)
+  })
+
+  it('one adult comes for April 2017 TTC in a Dormitory with a $500 discount', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'DORMITORY',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03',
+        roomDiscount: {
+          type: 'FIXED',
+          value: 500
+        }
+      }]
+    })
+    expect(calculator.getGrandTotal()).to.equal(3255 - 500)
+    expect(calculator.getTotalNumberOfNights()).to.equal(30)
+  })
+
+  it('one adult comes for April 2017 TTC in a Tent Hut with a $500 discount', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'TENT_HUT',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03',
+        roomDiscount: {
+          type: 'FIXED',
+          value: 500
+        }
+      }]
+    })
+    expect(calculator.getGrandTotal()).to.equal(3490 - 500)
+    expect(calculator.getTotalNumberOfNights()).to.equal(30)
+  })
+
+
   // Story provided by Anne Voors:
   // A guest arrives on March 26th and is planning on departing April 3rd 2017, staying in a beloved north tent hut.
   // While at the ashram, for obvious reasons, they fall in love with Sivananda yoga
