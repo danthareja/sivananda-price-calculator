@@ -53,13 +53,28 @@ class RoomStay {
 
 class TTCStay extends RoomStay {
   getDailyRoomYVPRate() {
-    if (!ttc.prices[this.roomCategory.id]) {
-      throw new Error(`No TTC price for room "${this.roomCategory.id}"`)
+    const session = ttc.find(session => this.checkInDate.isSame(session.checkInDate, 'day'))
+
+    if (!session) {
+      throw new Error(`Cannot find TTC session that starts on ${this.checkInDate.format('YYYY-MM-DD')}`)
     }
+
+    const room = session.prices.rooms[this.roomCategory.id]
+
+    if (typeof room === 'undefined') {
+      throw new Error(`TTC session ${session.id} has no price for room category: ${this.roomCategory.id}`)
+    }
+
+    const yvp = session.prices.yvp
+
+    if (typeof yvp === 'undefined') {
+      throw new Error(`TTC session ${session.id} has no price for yvp`)
+    }
+
     return [{
       date: this.checkInDate.clone(),
-      room: this.roomDiscount.applyTo(ttc.prices[this.roomCategory.id]),
-      yvp: 0
+      room: this.roomDiscount.applyTo(room),
+      yvp: this.yvpDiscount.applyTo(yvp)
     }]
   }
 }

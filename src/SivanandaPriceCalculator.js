@@ -1,6 +1,6 @@
 import moment from 'moment'
 import * as _ from './lodash'
-import RoomStayFactory from './RoomStayFactory'
+import StayFactory from './StayFactory'
 import Course from './Course'
 import rooms from './data/rooms'
 import seasons from './data/seasons'
@@ -28,7 +28,7 @@ export default class SivanandaPriceCalculator {
       })
     }
     this.courses = courses.map(course => new Course(course))
-    this.stays = stays.map(stay => RoomStayFactory.createStay(stay, this.courses, this.reservation))
+    this.stays = stays.map(stay => StayFactory.createStay(stay, this.courses, this.reservation))
   }
 
   getDailyRoomYVP() {
