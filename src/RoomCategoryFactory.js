@@ -94,7 +94,7 @@ class BeachHutRoomCategory extends AbstractRoomCategory {}
 class GardenBathRoomCategory extends AbstractRoomCategory {}
 class GardenDoubleRoomCategory extends AbstractSingleBedRoomCategory {
   getRoomCategoryForShared() {
-    return RoomCategoryFactory.createRoomCategory('GARDEN_SHARED_SHARING')
+    return RoomCategoryFactory.createRoomCategory('GARDEN_SHARED_SHARING', this.reservation)
   }
 }
 class GardenSharedRoomCategory extends AbstractRoomCategory {}
@@ -116,7 +116,7 @@ export default class RoomCategoryFactory {
       case 'GARDEN_BATH_SHARING': return new GardenBathRoomCategory('GARDEN_BATH', true, reservation)
       case 'GARDEN_DOUBLE': return new GardenDoubleRoomCategory('GARDEN_DOUBLE', false, reservation)
       case 'GARDEN_DOUBLE_SHARING': return new GardenDoubleRoomCategory('GARDEN_DOUBLE', true, reservation)
-      case 'GARDEN_SHARED': return new GardenSharedRoomCategory('GARDEN_SHARED', false)
+      case 'GARDEN_SHARED': return new GardenSharedRoomCategory('GARDEN_SHARED', false, reservation)
       case 'GARDEN_SHARED_SHARING': return new GardenSharedRoomCategory('GARDEN_SHARED', true, reservation)
       case 'GARDEN_SINGLE': return new GardenSingleRoomCategory('GARDEN_SINGLE', false, reservation)
       case 'DORMITORY': return new DormitoryRoomCategory('DORMITORY', false, reservation)

@@ -750,7 +750,7 @@ var GardenDoubleRoomCategory = function (_AbstractSingleBedRoo) {
   createClass(GardenDoubleRoomCategory, [{
     key: 'getRoomCategoryForShared',
     value: function getRoomCategoryForShared() {
-      return RoomCategoryFactory.createRoomCategory('GARDEN_SHARED_SHARING');
+      return RoomCategoryFactory.createRoomCategory('GARDEN_SHARED_SHARING', this.reservation);
     }
   }]);
   return GardenDoubleRoomCategory;
@@ -841,7 +841,7 @@ var RoomCategoryFactory = function () {
         case 'GARDEN_DOUBLE_SHARING':
           return new GardenDoubleRoomCategory('GARDEN_DOUBLE', true, reservation);
         case 'GARDEN_SHARED':
-          return new GardenSharedRoomCategory('GARDEN_SHARED', false);
+          return new GardenSharedRoomCategory('GARDEN_SHARED', false, reservation);
         case 'GARDEN_SHARED_SHARING':
           return new GardenSharedRoomCategory('GARDEN_SHARED', true, reservation);
         case 'GARDEN_SINGLE':
