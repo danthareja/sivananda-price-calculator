@@ -15,7 +15,14 @@ export default class Discount {
     }
   }
 
-  applyTo(price) {
-    return price - this.calculateAmount(price)
+  calculateDailyAmount(price, days) {
+    switch (this.type) {
+      case 'PERCENT':
+        return price * ( this.value / 100 )
+      case 'FIXED':
+        return this.value / days
+      default:
+        return 0
+    }
   }
 }

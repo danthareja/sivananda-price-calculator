@@ -5112,9 +5112,16 @@ var Discount = function () {
       }
     }
   }, {
-    key: 'applyTo',
-    value: function applyTo(price) {
-      return price - this.calculateAmount(price);
+    key: 'calculateDailyAmount',
+    value: function calculateDailyAmount(price, days) {
+      switch (this.type) {
+        case 'PERCENT':
+          return price * (this.value / 100);
+        case 'FIXED':
+          return this.value / days;
+        default:
+          return 0;
+      }
     }
   }]);
   return Discount;
@@ -5941,14 +5948,14 @@ var RoomStay = function () {
     value: function getDailyRoomYVPRate() {
       var _this = this;
 
-      return this.getDateRange().map(function (date) {
+      return this.getDateRange().map(function (date, i, dates) {
         var roomSubtotal = lodash_round(_this.getRoomRate(date), 2);
-        var roomDiscount = lodash_round(_this.roomDiscount.calculateAmount(roomSubtotal), 2);
-        var roomTotal = lodash_round(_this.roomDiscount.applyTo(roomSubtotal), 2);
+        var roomDiscount = lodash_round(_this.roomDiscount.calculateDailyAmount(roomSubtotal, dates.length), 2);
+        var roomTotal = lodash_round(roomSubtotal - roomDiscount, 2);
 
         var yvpSubtotal = lodash_round(_this.getYVPRate(date), 2);
-        var yvpDiscount = lodash_round(_this.yvpDiscount.calculateAmount(yvpSubtotal), 2);
-        var yvpTotal = lodash_round(_this.yvpDiscount.applyTo(yvpSubtotal), 2);
+        var yvpDiscount = lodash_round(_this.yvpDiscount.calculateDailyAmount(yvpSubtotal, dates.length), 2);
+        var yvpTotal = lodash_round(yvpSubtotal - yvpDiscount, 2);
 
         var total = lodash_round(roomTotal + yvpTotal, 2);
 
@@ -6066,7 +6073,7 @@ var Course = function () {
   }, {
     key: 'totalCost',
     value: function totalCost() {
-      return this.discount.applyTo(this.tuition);
+      return this.tuition - this.discount.calculateAmount(this.tuition);
     }
   }]);
   return Course;

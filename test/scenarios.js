@@ -876,6 +876,7 @@ describe('scenarios', function() {
         discount: {type: 'PERCENT', value: 10}
       }]
     })
+    console.log(calculator.getDailyRoomYVP())
     expect(calculator.getGrandTotal()).to.equal(1935.9)
   })
   

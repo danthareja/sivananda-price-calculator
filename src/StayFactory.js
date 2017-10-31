@@ -43,14 +43,14 @@ class RoomStay {
   }
 
   getDailyRoomYVPRate() {
-    return this.getDateRange().map(date => {
+    return this.getDateRange().map((date, i, dates) => {
       const roomSubtotal = round(this.getRoomRate(date), 2)
-      const roomDiscount = round(this.roomDiscount.calculateAmount(roomSubtotal), 2)
-      const roomTotal = round(this.roomDiscount.applyTo(roomSubtotal), 2)
+      const roomDiscount = round(this.roomDiscount.calculateDailyAmount(roomSubtotal, dates.length), 2)
+      const roomTotal = round(roomSubtotal - roomDiscount, 2)
 
       const yvpSubtotal = round(this.getYVPRate(date), 2)
-      const yvpDiscount = round(this.yvpDiscount.calculateAmount(yvpSubtotal), 2)
-      const yvpTotal = round(this.yvpDiscount.applyTo(yvpSubtotal), 2)
+      const yvpDiscount = round(this.yvpDiscount.calculateDailyAmount(yvpSubtotal, dates.length), 2)
+      const yvpTotal = round(yvpSubtotal - yvpDiscount, 2)
 
       const total = round(roomTotal + yvpTotal, 2)
 

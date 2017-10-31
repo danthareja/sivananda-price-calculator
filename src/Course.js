@@ -15,6 +15,6 @@ export default class Course {
   }
 
   totalCost() {
-    return this.discount.applyTo(this.tuition)
+    return this.tuition - this.discount.calculateAmount(this.tuition)
   }
 }
