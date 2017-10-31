@@ -1069,20 +1069,28 @@ var RoomStay = function () {
 
       return this.getDateRange().map(function (date) {
         var roomSubtotal = round(_this.getRoomRate(date), 2);
+        var roomDiscount = round(_this.roomDiscount.calculateAmount(roomSubtotal), 2);
+        var roomTotal = round(_this.roomDiscount.applyTo(roomSubtotal), 2);
+
         var yvpSubtotal = round(_this.getYVPRate(date), 2);
+        var yvpDiscount = round(_this.yvpDiscount.calculateAmount(yvpSubtotal), 2);
+        var yvpTotal = round(_this.yvpDiscount.applyTo(yvpSubtotal), 2);
+
+        var total = round(roomTotal + yvpTotal, 2);
 
         return {
           date: date,
           room: {
             subtotal: roomSubtotal,
-            discount: round(_this.roomDiscount.calculateAmount(roomSubtotal), 2),
-            total: round(_this.roomDiscount.applyTo(roomSubtotal), 2)
+            discount: roomDiscount,
+            total: roomTotal
           },
           yvp: {
             subtotal: yvpSubtotal,
-            discount: round(_this.yvpDiscount.calculateAmount(yvpSubtotal), 2),
-            total: round(_this.yvpDiscount.applyTo(yvpSubtotal), 2)
-          }
+            discount: yvpDiscount,
+            total: yvpTotal
+          },
+          total: total
         };
       });
     }
@@ -1267,7 +1275,7 @@ var SivanandaPriceCalculator$1 = function () {
       }, []).sort(function (a, b) {
         return a.date.isBefore(b.date);
       }).map(function (day) {
-        return Object.assign(day, { date: day.date.format('YYYY-MM-DD') });
+        return Object.assign(day, { date: day.date.format('MM/DD/YYYY') });
       });
     }
   }, {

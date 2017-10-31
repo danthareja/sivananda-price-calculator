@@ -5943,20 +5943,28 @@ var RoomStay = function () {
 
       return this.getDateRange().map(function (date) {
         var roomSubtotal = lodash_round(_this.getRoomRate(date), 2);
+        var roomDiscount = lodash_round(_this.roomDiscount.calculateAmount(roomSubtotal), 2);
+        var roomTotal = lodash_round(_this.roomDiscount.applyTo(roomSubtotal), 2);
+
         var yvpSubtotal = lodash_round(_this.getYVPRate(date), 2);
+        var yvpDiscount = lodash_round(_this.yvpDiscount.calculateAmount(yvpSubtotal), 2);
+        var yvpTotal = lodash_round(_this.yvpDiscount.applyTo(yvpSubtotal), 2);
+
+        var total = lodash_round(roomTotal + yvpTotal, 2);
 
         return {
           date: date,
           room: {
             subtotal: roomSubtotal,
-            discount: lodash_round(_this.roomDiscount.calculateAmount(roomSubtotal), 2),
-            total: lodash_round(_this.roomDiscount.applyTo(roomSubtotal), 2)
+            discount: roomDiscount,
+            total: roomTotal
           },
           yvp: {
             subtotal: yvpSubtotal,
-            discount: lodash_round(_this.yvpDiscount.calculateAmount(yvpSubtotal), 2),
-            total: lodash_round(_this.yvpDiscount.applyTo(yvpSubtotal), 2)
-          }
+            discount: yvpDiscount,
+            total: yvpTotal
+          },
+          total: total
         };
       });
     }
@@ -6141,7 +6149,7 @@ var SivanandaPriceCalculator$1 = function () {
       }, []).sort(function (a, b) {
         return a.date.isBefore(b.date);
       }).map(function (day) {
-        return Object.assign(day, { date: day.date.format('YYYY-MM-DD') });
+        return Object.assign(day, { date: day.date.format('MM/DD/YYYY') });
       });
     }
   }, {
