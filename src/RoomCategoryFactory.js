@@ -123,7 +123,9 @@ export default class RoomCategoryFactory {
       case 'TENT_HUT': return new TentHutRoomCategory('TENT_HUT', false, reservation)
       case 'TENT_SPACE': return new TentSpaceRoomCategory('TENT_SPACE', false, reservation)
       case 'NULL_ROOM': return new TentSpaceRoomCategory('NULL_ROOM', false, reservation)
-      default: throw new Error(`Invalid roomId: "${roomId}"`)
+      default: throw new Error(`Invalid roomId: ${roomId}. Must be one of ${rooms.map(r => r.id).join(', ')}`)
     }
   };
 }
+
+

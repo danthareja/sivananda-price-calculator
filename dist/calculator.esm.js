@@ -1,9 +1,5 @@
+import round from 'lodash.round';
 import moment from 'moment';
-import _ from 'lodash.round';
-import _$1 from 'lodash.sumby';
-import _$2 from 'lodash.values';
-
-// Import only used functions from lodash to keep bundle size down
 
 var asyncGenerator = function () {
   function AwaitValue(value) {
@@ -851,7 +847,9 @@ var RoomCategoryFactory = function () {
         case 'NULL_ROOM':
           return new TentSpaceRoomCategory('NULL_ROOM', false, reservation);
         default:
-          throw new Error('Invalid roomId: "' + roomId + '"');
+          throw new Error('Invalid roomId: ' + roomId + '. Must be one of ' + rooms.map(function (r) {
+            return r.id;
+          }).join(', '));
       }
     }
   }]);
@@ -1066,10 +1064,21 @@ var RoomStay = function () {
       var _this = this;
 
       return this.getDateRange().map(function (date) {
+        var roomSubtotal = round(_this.getRoomRate(date), 2);
+        var yvpSubtotal = round(_this.getYVPRate(date), 2);
+
         return {
           date: date,
-          room: _this.roomDiscount.applyTo(_this.getRoomRate(date)),
-          yvp: _this.yvpDiscount.applyTo(_this.getYVPRate(date))
+          room: {
+            subtotal: roomSubtotal,
+            discount: round(_this.roomDiscount.calculateAmount(roomSubtotal), 2),
+            total: round(_this.roomDiscount.applyTo(roomSubtotal), 2)
+          },
+          yvp: {
+            subtotal: yvpSubtotal,
+            discount: round(_this.yvpDiscount.calculateAmount(yvpSubtotal), 2),
+            total: round(_this.yvpDiscount.applyTo(yvpSubtotal), 2)
+          }
         };
       });
     }
@@ -1086,35 +1095,46 @@ var TTCStay = function (_RoomStay) {
   }
 
   createClass(TTCStay, [{
-    key: 'getDailyRoomYVPRate',
-    value: function getDailyRoomYVPRate() {
-      var _this3 = this;
-
+    key: 'getDateRange',
+    value: function getDateRange() {
+      return [this.checkInDate.clone()];
+    }
+  }, {
+    key: 'getSession',
+    value: function getSession(date) {
       var session = ttc.find(function (session) {
-        return _this3.checkInDate.isSame(session.checkInDate, 'day');
+        return date.isSame(session.checkInDate, 'day');
       });
 
       if (!session) {
-        throw new Error('Cannot find TTC session that starts on ' + this.checkInDate.format('YYYY-MM-DD'));
+        throw new Error('Cannot find TTC session that starts on ' + date.format('YYYY-MM-DD'));
       }
 
+      return session;
+    }
+  }, {
+    key: 'getRoomRate',
+    value: function getRoomRate(date) {
+      var session = this.getSession(date);
       var room = session.prices.rooms[this.roomCategory.id];
 
       if (typeof room === 'undefined') {
         throw new Error('TTC session ' + session.id + ' has no price for room category: ' + this.roomCategory.id);
       }
 
+      return room;
+    }
+  }, {
+    key: 'getYVPRate',
+    value: function getYVPRate(date) {
+      var session = this.getSession(date);
       var yvp = session.prices.yvp;
 
       if (typeof yvp === 'undefined') {
         throw new Error('TTC session ' + session.id + ' has no price for yvp');
       }
 
-      return [{
-        date: this.checkInDate.clone(),
-        room: this.roomDiscount.applyTo(room),
-        yvp: this.yvpDiscount.applyTo(yvp)
-      }];
+      return yvp;
     }
   }]);
   return TTCStay;
@@ -1130,7 +1150,7 @@ var StayFactory = function () {
     value: function createStay(stay, courses, reservation) {
       if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation);
       if (stay.type === 'TTC') return new TTCStay(stay, courses, reservation);
-      throw new Error('Invalid stay type: ' + stay.type);
+      throw new Error('Invalid stay type: ' + stay.type + '. Must be one of ROOM, TTC');
     }
   }]);
   return StayFactory;
@@ -1180,7 +1200,7 @@ var SivanandaPriceCalculator$1 = function () {
   }, {
     key: 'getTTC',
     value: function getTTC() {
-      return Object.assign({}, ttc);
+      return ttc.slice();
     }
   }]);
 
@@ -1197,12 +1217,13 @@ var SivanandaPriceCalculator$1 = function () {
         courses = _ref$courses === undefined ? [] : _ref$courses;
     classCallCheck(this, SivanandaPriceCalculator);
 
+    this.validate(adults, children, stays, courses);
     this.reservation = {
       adults: adults,
       children: children,
-      nights: _$1(stays, function (stay) {
-        return moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days');
-      })
+      nights: stays.reduce(function (sum, stay) {
+        return sum + moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days');
+      }, 0)
     };
     this.courses = courses.map(function (course) {
       return new Course(course);
@@ -1213,28 +1234,37 @@ var SivanandaPriceCalculator$1 = function () {
   }
 
   createClass(SivanandaPriceCalculator, [{
+    key: 'validate',
+    value: function validate(adults, children, stays, courses) {
+      // ** No stay is overlapping with another stay **
+      // DateRangesOverlap = max(start1, start2) < min(end1, end2)
+      // https://stackoverflow.com/questions/325933/determine-whether-two-date-ranges-overlap
+      var stayDates = stays.map(function (stay) {
+        return {
+          roomId: stay.roomId,
+          checkInDate: moment(stay.checkInDate),
+          checkOutDate: moment(stay.checkOutDate)
+        };
+      });
+
+      stayDates.forEach(function (a, i, dates) {
+        dates.slice(i + 1).forEach(function (b, j) {
+          if (moment.max(a.checkInDate, b.checkInDate).isBefore(moment.min(a.checkOutDate, b.checkOutDate), 'day')) {
+            throw new Error('Stays cannot overlap. ' + a.roomId + ' (' + a.checkInDate.format('YYYY-MM-DD') + ' to ' + a.checkOutDate.format('YYYY-MM-DD') + ') overlaps with ' + b.roomId + ' (' + b.checkInDate.format('YYYY-MM-DD') + ' to ' + b.checkOutDate.format('YYYY-MM-DD') + ')');
+          }
+        });
+      });
+    }
+  }, {
     key: 'getDailyRoomYVP',
     value: function getDailyRoomYVP() {
-      // Because stays could be overlapping, we should merge room rate objects together
-      return this.stays.reduce(function (obj, stay) {
-        stay.getDailyRoomYVPRate().forEach(function (rate) {
-          var key = rate.date.format('MM/DD/YYYY');
-
-          if (!obj[key]) {
-            obj[key] = {};
-          }
-          if (!obj[key].room) {
-            obj[key].room = 0;
-          }
-          if (!obj[key].yvp) {
-            obj[key].yvp = 0;
-          }
-
-          obj[key].room += rate.room;
-          obj[key].yvp += rate.yvp;
-        });
-        return obj;
-      }, {});
+      return this.stays.reduce(function (days, stay) {
+        return days.concat(stay.getDailyRoomYVPRate());
+      }, []).sort(function (a, b) {
+        return a.date.isBefore(b.date);
+      }).map(function (day) {
+        return Object.assign(day, { date: day.date.format('YYYY-MM-DD') });
+      });
     }
   }, {
     key: 'getTotalNumberOfNights',
@@ -1244,19 +1274,23 @@ var SivanandaPriceCalculator$1 = function () {
   }, {
     key: 'getTotalRoom',
     value: function getTotalRoom() {
-      return _(_$1(_$2(this.getDailyRoomYVP()), 'room'), 2);
+      return round(this.getDailyRoomYVP().reduce(function (sum, day) {
+        return sum + day.room.total;
+      }, 0), 2);
     }
   }, {
     key: 'getTotalYVP',
     value: function getTotalYVP() {
-      return _(_$1(_$2(this.getDailyRoomYVP()), 'yvp'), 2);
+      return round(this.getDailyRoomYVP().reduce(function (sum, day) {
+        return sum + day.yvp.total;
+      }, 0), 2);
     }
   }, {
     key: 'getTotalCourse',
     value: function getTotalCourse() {
-      return _(_$1(this.courses, function (course) {
-        return course.totalCost();
-      }), 2);
+      return round(this.courses.reduce(function (sum, course) {
+        return sum + course.totalCost();
+      }, 0), 2);
     }
   }, {
     key: 'getSubtotal',

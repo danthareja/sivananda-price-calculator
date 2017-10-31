@@ -854,31 +854,6 @@ describe('scenarios', function() {
     expect(calculator.getTotalNumberOfNights()).to.equal(9)
   })
 
-  it('one adult staying 2 nights alone in a garden room double bed and 3 nights alone in a oceanview deluxe during Winter 2017', function() {
-    const calculator = new SivanandaPriceCalculator({
-      adults: 1,
-      stays: [{
-        type: 'ROOM',
-        roomId: 'GARDEN_DOUBLE',
-        checkInDate: formatMoment(dates['WINTER_2017'].clone()),
-        checkOutDate: formatMoment(dates['WINTER_2017'].clone().add(2, 'days'))
-      }, {
-        type: 'ROOM',
-        roomId: 'OCEAN_VIEW',
-        checkInDate: formatMoment(dates['WINTER_2017'].clone()),
-        checkOutDate: formatMoment(dates['WINTER_2017'].clone().add(3, 'days'))
-      }]
-    })
-    expect(calculator.getDailyRoomYVP()).to.eql({
-      '11/01/2016': { room: 138 + 294, yvp: 32 * 2 },
-      '11/02/2016': { room: 138 + 294, yvp: 32 * 2 },
-      '11/03/2016': { room: 294, yvp: 32 }
-    })
-    expect(calculator.getTotalRoom()).to.equal(1158)
-    expect(calculator.getTotalYVP()).to.equal(160)
-    expect(calculator.getGrandTotal()).to.equal(1318)
-  })
-
   // Story provided by Anne Voors:
   // A TTC graduate stays for 14 nights in a beach hut that they would like to share with another guest (stranger).
   // This graduate is taking Brahmaswaroop's "Dual path of yoga practice and Code writing" yoga course, which is 295 and 5 days long.

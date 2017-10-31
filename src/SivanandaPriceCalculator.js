@@ -1,5 +1,5 @@
+import round from 'lodash.round'
 import moment from 'moment'
-import * as _ from './lodash'
 import StayFactory from './StayFactory'
 import Course from './Course'
 import rooms from './data/rooms'
@@ -16,36 +16,49 @@ export default class SivanandaPriceCalculator {
   }
 
   static getTTC() {
-    return Object.assign({}, ttc)
+    return ttc.slice()
   }
 
   constructor({ adults = 0, children = 0, stays = [], courses = [] }) {
+    this.validate(adults, children, stays, courses)
     this.reservation = {
       adults: adults,
       children: children,
-      nights: _.sumBy(stays, stay => {
-        return moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days')
-      })
+      nights: stays.reduce((sum, stay) => {
+        return sum + moment(stay.checkOutDate).diff(moment(stay.checkInDate), 'days')
+      }, 0)
     }
     this.courses = courses.map(course => new Course(course))
     this.stays = stays.map(stay => StayFactory.createStay(stay, this.courses, this.reservation))
   }
 
-  getDailyRoomYVP() {
-    // Because stays could be overlapping, we should merge room rate objects together
-    return this.stays.reduce((obj, stay) => {
-      stay.getDailyRoomYVPRate().forEach(rate => {
-        let key = rate.date.format('MM/DD/YYYY');
+  validate(adults, children, stays, courses) {
+    // ** No stay is overlapping with another stay **
+    // DateRangesOverlap = max(start1, start2) < min(end1, end2)
+    // https://stackoverflow.com/questions/325933/determine-whether-two-date-ranges-overlap
+    const stayDates = stays.map(stay => {
+      return {
+        roomId: stay.roomId,
+        checkInDate: moment(stay.checkInDate),
+        checkOutDate: moment(stay.checkOutDate)
+      }
+    })
 
-        if (!obj[key]) { obj[key] = {} }
-        if (!obj[key].room) { obj[key].room = 0 }
-        if (!obj[key].yvp) { obj[key].yvp = 0 }
-
-        obj[key].room += rate.room
-        obj[key].yvp += rate.yvp
+    stayDates.forEach((a, i, dates) => {
+      dates.slice(i + 1).forEach((b, j) => {
+        if (moment.max(a.checkInDate, b.checkInDate).isBefore(moment.min(a.checkOutDate, b.checkOutDate), 'day')) {
+          throw new Error(`Stays cannot overlap. ${a.roomId} (${a.checkInDate.format('YYYY-MM-DD')} to ${a.checkOutDate.format('YYYY-MM-DD')}) overlaps with ${b.roomId} (${b.checkInDate.format('YYYY-MM-DD')} to ${b.checkOutDate.format('YYYY-MM-DD')})`)
+        }
       })
-      return obj
-    }, {})
+    })
+  }
+
+  getDailyRoomYVP() {
+    return this.stays.reduce((days, stay) => {
+      return days.concat(stay.getDailyRoomYVPRate())
+    }, [])
+    .sort((a, b) => a.date.isBefore(b.date))
+    .map(day => Object.assign(day, { date: day.date.format('YYYY-MM-DD')}))
   }
 
   getTotalNumberOfNights() {
@@ -53,15 +66,15 @@ export default class SivanandaPriceCalculator {
   }
 
   getTotalRoom() {
-    return _.round(_.sumBy(_.values(this.getDailyRoomYVP()), 'room'), 2)
+    return round(this.getDailyRoomYVP().reduce((sum, day) => sum + day.room.total, 0), 2)
   }
 
   getTotalYVP() {
-    return _.round(_.sumBy(_.values(this.getDailyRoomYVP()), 'yvp'), 2)
+    return round(this.getDailyRoomYVP().reduce((sum, day) => sum + day.yvp.total, 0), 2)
   }
 
   getTotalCourse() {
-    return _.round(_.sumBy(this.courses, course => course.totalCost()), 2)
+    return round(this.courses.reduce((sum, course) => sum + course.totalCost(), 0), 2)
   }
 
   getSubtotal() {

@@ -16,7 +16,7 @@ const dates = {
   SUMMER_2018: moment('2018-07-01'),
 };
 
-describe('base rates', function() {
+describe('rates', function() {
   const nights = [1, 7, 14, 21];
   
   const rooms = {

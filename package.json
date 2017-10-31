@@ -20,8 +20,6 @@
   },
   "dependencies": {
     "lodash.round": "^4.0.4",
-    "lodash.sumby": "^4.6.0",
-    "lodash.values": "^4.3.0",
     "moment": "^2.19.1"
   },
   "devDependencies": {

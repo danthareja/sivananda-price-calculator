@@ -1,5 +1,5 @@
+import round from 'lodash.round'
 import moment from 'moment'
-import * as _ from './lodash'
 import Discount from './Discount'
 import SeasonPriceFactory from './SeasonPriceFactory'
 import RoomCategoryFactory from './RoomCategoryFactory'
@@ -43,39 +43,62 @@ class RoomStay {
   }
 
   getDailyRoomYVPRate() {
-    return this.getDateRange().map(date => ({
-      date: date,
-      room: this.roomDiscount.applyTo(this.getRoomRate(date)),
-      yvp: this.yvpDiscount.applyTo(this.getYVPRate(date)),
-    }))
+    return this.getDateRange().map(date => {
+      const roomSubtotal = round(this.getRoomRate(date), 2)
+      const yvpSubtotal = round(this.getYVPRate(date), 2)
+
+      return {
+        date: date,
+        room: {
+          subtotal: roomSubtotal,
+          discount: round(this.roomDiscount.calculateAmount(roomSubtotal), 2),
+          total: round(this.roomDiscount.applyTo(roomSubtotal), 2)
+        },
+        yvp: {
+          subtotal: yvpSubtotal,
+          discount: round(this.yvpDiscount.calculateAmount(yvpSubtotal), 2),
+          total: round(this.yvpDiscount.applyTo(yvpSubtotal), 2)
+        }
+      }
+    })
   }
 }
 
 class TTCStay extends RoomStay {
-  getDailyRoomYVPRate() {
-    const session = ttc.find(session => this.checkInDate.isSame(session.checkInDate, 'day'))
+  getDateRange() {
+    return [this.checkInDate.clone()]
+  }
+
+  getSession(date) {
+    const session = ttc.find(session => date.isSame(session.checkInDate, 'day'))
 
     if (!session) {
-      throw new Error(`Cannot find TTC session that starts on ${this.checkInDate.format('YYYY-MM-DD')}`)
+      throw new Error(`Cannot find TTC session that starts on ${date.format('YYYY-MM-DD')}`)
     }
 
+    return session
+  }
+
+  getRoomRate(date) {
+    const session = this.getSession(date)
     const room = session.prices.rooms[this.roomCategory.id]
 
     if (typeof room === 'undefined') {
       throw new Error(`TTC session ${session.id} has no price for room category: ${this.roomCategory.id}`)
     }
 
+    return room
+  }
+
+  getYVPRate(date) {
+    const session = this.getSession(date)
     const yvp = session.prices.yvp
 
     if (typeof yvp === 'undefined') {
       throw new Error(`TTC session ${session.id} has no price for yvp`)
     }
 
-    return [{
-      date: this.checkInDate.clone(),
-      room: this.roomDiscount.applyTo(room),
-      yvp: this.yvpDiscount.applyTo(yvp)
-    }]
+    return yvp
   }
 }
 
@@ -83,6 +106,6 @@ export default class StayFactory {
   static createStay(stay, courses, reservation) {
     if (stay.type === 'ROOM') return new RoomStay(stay, courses, reservation)
     if (stay.type === 'TTC') return new TTCStay(stay, courses, reservation)
-    throw new Error(`Invalid stay type: ${stay.type}`)
+    throw new Error(`Invalid stay type: ${stay.type}. Must be one of ROOM, TTC`)
   }
 }
