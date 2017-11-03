@@ -1280,7 +1280,7 @@ var SivanandaPriceCalculator$1 = function () {
       return this.stays.reduce(function (days, stay) {
         return days.concat(stay.getDailyRoomYVPRate());
       }, []).sort(function (a, b) {
-        return a.date.isBefore(b.date);
+        return a.date.diff(b.date, 'days');
       }).map(function (day) {
         return Object.assign(day, { date: day.date.format('MM/DD/YYYY') });
       });

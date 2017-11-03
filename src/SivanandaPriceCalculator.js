@@ -57,7 +57,7 @@ export default class SivanandaPriceCalculator {
     return this.stays.reduce((days, stay) => {
       return days.concat(stay.getDailyRoomYVPRate())
     }, [])
-    .sort((a, b) => a.date.isBefore(b.date))
+    .sort((a, b) => a.date.diff(b.date, 'days'))
     .map(day => Object.assign(day, { date: day.date.format('MM/DD/YYYY')}))
   }
 

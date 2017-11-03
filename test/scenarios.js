@@ -743,6 +743,28 @@ describe('scenarios', function() {
         checkOutDate: formatMoment(dates['WINTER_2017'].clone().add(8, 'days'))
       }]
     })
+    expect(calculator.getDailyRoomYVP()).to.deep.equal([
+      { date: '11/01/2016',
+        room: { subtotal: 138, discount: 0, total: 138 },
+        yvp: { subtotal: 32, discount: 0, total: 32 },
+        total: 170 },
+      { date: '11/02/2016',
+        room: { subtotal: 138, discount: 0, total: 138 },
+        yvp: { subtotal: 32, discount: 0, total: 32 },
+        total: 170 },
+      { date: '11/06/2016',
+        room: { subtotal: 294, discount: 0, total: 294 },
+        yvp: { subtotal: 32, discount: 0, total: 32 },
+        total: 326 },
+      { date: '11/07/2016',
+        room: { subtotal: 294, discount: 0, total: 294 },
+        yvp: { subtotal: 32, discount: 0, total: 32 },
+        total: 326 },
+      { date: '11/08/2016',
+        room: { subtotal: 294, discount: 0, total: 294 },
+        yvp: { subtotal: 32, discount: 0, total: 32 },
+        total: 326 }
+    ])
     expect(calculator.getTotalRoom()).to.equal(1158)
     expect(calculator.getTotalYVP()).to.equal(160)
     expect(calculator.getGrandTotal()).to.equal(1318)
@@ -876,7 +898,6 @@ describe('scenarios', function() {
         discount: {type: 'PERCENT', value: 10}
       }]
     })
-    console.log(calculator.getDailyRoomYVP())
     expect(calculator.getGrandTotal()).to.equal(1935.9)
   })
   
