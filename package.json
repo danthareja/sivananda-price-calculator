@@ -16,7 +16,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "pretest": "npm run build",
-    "test": "mocha --require babel-polyfill --compilers js:babel-register"
+    "test": "mocha --require babel-polyfill --require babel-register"
   },
   "dependencies": {
     "lodash.round": "^4.0.4",
