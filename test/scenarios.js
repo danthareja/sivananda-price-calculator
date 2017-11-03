@@ -1158,5 +1158,24 @@ describe('scenarios', function() {
     expect(calculator.getGrandTotal()).to.equal(4362-7*8)
     expect(calculator.getTotalNumberOfNights()).to.equal(38)
   })
+
+  it('one adult taking April 2017 TTC and then staying in a Tent Hut for 8 more days', function() {
+    const calculator = new SivanandaPriceCalculator({
+      adults: 1,
+      stays: [{
+        type: 'TTC',
+        roomId: 'TENT_HUT',
+        checkInDate: '2017-04-03',
+        checkOutDate: '2017-05-03'
+      }, {
+        type: 'ROOM',
+        roomId: 'TENT_HUT',
+        checkInDate: '2017-05-03',
+        checkOutDate: '2017-05-11'
+      }]
+    })
+    expect(calculator.getTotalNumberOfNights()).to.equal(38)
+    expect(calculator.getGrandTotal()).to.equal(4362-7*8)
+  })
 })
 
